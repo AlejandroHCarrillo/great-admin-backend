@@ -26,6 +26,8 @@ app.use( express.json() );
 const appRoutes = require('./routes/app');
 const usuarioRoutes = require('./routes/usuario.routes');
 const clienteRoutes = require('./routes/cliente.routes');
+const productoRoutes = require('./routes/producto.routes');
+
 const loginRoutes = require('./routes/login');
 const hospitalRoutes = require('./routes/hospital');
 const medicoRoutes = require('./routes/medico');
@@ -37,6 +39,7 @@ const imagenesRoutes = require('./routes/imagenes');
 // usar los middlewares dentro de las rutas
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/usuario', usuarioRoutes)
+app.use('/api/producto', productoRoutes)
 app.use('/api/cliente', clienteRoutes)
 
 app.use('/api/login', loginRoutes)

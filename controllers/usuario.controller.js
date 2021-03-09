@@ -3,12 +3,12 @@
  */
  const { response } = require('express');
  PAGESIZE = require("../config/config").PAGESIZE;
- const User = require('../models/usuario.model');
+ const Users = require('../models/usuario.model');
  
  const getUserById = async(req, res = response ) => {
      const usuarioId = req.params.id;
      try{
-         const usuario = await User.findById( usuarioId );
+         const usuario = await Users.findById( usuarioId );
  
          if (!usuario) {
              return res.status(404).json({
@@ -45,7 +45,7 @@
      // console.log("sortBy: ", sortBy);
  
      try{
-         User.find({}, "nombre username name email role")
+         Users.find({}, "nombre username name email role")
          .sort(sortBy)
          .skip(desde)
          .limit(pagesz)
@@ -57,7 +57,7 @@
                errors: err
              });
            }
-           User.countDocuments({}, (err, conteo) => {
+           Users.countDocuments({}, (err, conteo) => {
              res.status(200).json({
                ok: true,
                usuarios: usuarios,
@@ -77,7 +77,7 @@
   
   const createUser = async(req, res = response ) => { 
       try{
-          let usuario = new User(req.body);
+          let usuario = new Users(req.body);
    
           await usuario.save();
           
@@ -92,7 +92,8 @@
           console.log(error);
           res.status(500).json({
               ok: false,
-              msg: 'Error, por favor contacte a su admistrador'
+              msg: 'Error, por favor contacte a su admistrador',
+              error
           })
       }
   };
@@ -103,7 +104,7 @@
      const uid = req.uid;
  
      try{
-         const usuario = await User.findById( usuarioId );
+         const usuario = await Users.findById( usuarioId );
  
          if (!usuario){
              return res.status(404).json({
@@ -125,7 +126,7 @@
              ...req.body,
              user: uid
          }
-         const usuarioActualizado = await User.findByIdAndUpdate(usuarioId, nuevoUsuario, { new: true } );
+         const usuarioActualizado = await Users.findByIdAndUpdate(usuarioId, nuevoUsuario, { new: true } );
  
          // console.log( userActualizado );
          return res.status(200).json({ 
@@ -148,7 +149,7 @@ const deleteUser = async(req, res = response ) => {
      const uid = req.uid;
  
      try{
-         const usuario = await User.findById( usuarioId );
+         const usuario = await Users.findById( usuarioId );
  
          if (!usuario){
              return res.status(404).json({
@@ -166,7 +167,7 @@ const deleteUser = async(req, res = response ) => {
          //     })            
          // }
          
-         const usuarioEliminado = await User.findByIdAndDelete( usuarioId );
+         const usuarioEliminado = await Users.findByIdAndDelete( usuarioId );
          
          return res.status(200).json({ 
              ok: true,
@@ -202,7 +203,7 @@ const deleteUser = async(req, res = response ) => {
     //  console.log("buscando usuarios: ", regex );
  
      try{
-         User.find({}, "nombre username name email role")
+         Users.find({}, "nombre username name email role")
                 .or([
                      { nombre: regex },
                      { email: regex }
@@ -218,7 +219,7 @@ const deleteUser = async(req, res = response ) => {
                errors: err
              });
            }
-           User.countDocuments({}, (err, conteo) => {
+           Users.countDocuments({}, (err, conteo) => {
              res.status(200).json({
                ok: true,
                usuarios: usuarios,
