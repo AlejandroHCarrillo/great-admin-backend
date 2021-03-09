@@ -3,7 +3,7 @@
  */
 const { response } = require('express');
 const bcrypt = require('bcryptjs');
-const Usuario = require('../models/UsuarioModel');
+const Usuario = require('../models/usuario');
 const { generateJWT } = require('../helpers/jwt')
 const { cons_color } = require('../config/console-colors');
 
@@ -26,7 +26,6 @@ const createUser = async(req, res = response ) => {
 
         usuario = new Usuario(req.body);
 
-        // Encriptamos el password
         const salt = bcrypt.genSaltSync();
         usuario.password = bcrypt.hashSync( password, salt );
 
@@ -63,7 +62,7 @@ const LoginUser = async (req, res = express.response ) => {
             return res.status(400).json({
                     ok: false,
                     // msg: 'El usuario no existe.'
-                    msg: 'Error de autenticacion(u).'
+                    msg: 'Error de autenticacion.'
                 });
         }
 
@@ -74,7 +73,7 @@ const LoginUser = async (req, res = express.response ) => {
             return res.status(400).json({
                 ok: false,
                 // msg: 'El password es incorrecto.'
-                msg: 'Error de autenticacion(p).'
+                msg: 'Error de autenticacion.'
             });    
         }
         // Generar el token
@@ -104,8 +103,6 @@ const renewToken = async (req, res = express.response ) => {
 
     res.json({ 
         ok: true,
-        uid: uid,
-        name: name,
         token,
         // uid,
         // msg: 'Renew token from controller'

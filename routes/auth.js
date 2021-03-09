@@ -9,7 +9,6 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { createUser, LoginUser, renewToken } = require('../controllers/auth');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
-
 const router = Router();
 
 // Configuracion de rutas para que ejecuten una funcion del controlador
@@ -18,20 +17,21 @@ const router = Router();
 // Se creo el middleware validarCampos el cual verifica que se cumplan las condiciones de los checks
 // si no cumplen con las condiciones de los checks regresa una respuesta 400 con los errores 
 router.post('/new',
-            check('name', 'El nombre es obligatorio').not().isEmpty(),
+            check('nombre', 'El nombre completo es obligatorio').not().isEmpty(),
+            check('username', 'El nombre de usuario es obligatorio').not().isEmpty(),
             check('email', 'El email no es valido').isEmail(),
-            check('password', 'El password debe ser de al menos 5+ caracteres de largo y contener al menos un numero')
+            check('password', 'The password must be 5+ chars long and contain a number')
                 .not()
                 .isIn(['123', 'password', 'god'])
-                .withMessage('No debe usar paswords comunes')
+                .withMessage('Do not use a common word as the password')
                 .isLength({ min: 5 })
-                .matches(/\d/)
+                .matches(/\d/)            
             , validarCampos,
             createUser );
 
 router.post('/',
             check('email', 'El email no es valido').isEmail(),
-            check('password', 'El password no es valido')
+            check('password', 'The password must be 5+ chars long and contain a number')
                 .not().isEmpty()
                 .isLength({ min: 5 })
             , validarCampos,

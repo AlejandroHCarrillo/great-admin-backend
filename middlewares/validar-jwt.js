@@ -1,7 +1,6 @@
 const { response } = require('express');
 const jwt = require('jsonwebtoken');
 
-
 const validarJWT = (req, res = response, next ) => {
     // x-token headers
     const token = req.header('x-token');
@@ -18,9 +17,10 @@ const validarJWT = (req, res = response, next ) => {
         const payload = jwt.verify(token, process.env.SECRET_JWT_SEED);        
         // console.log("payload:", payload);
 
-        // injectamos el uid y el token al los req para tenerlos disponibles en futurs req
+        // Agregamos el uid, el nombre y el rol y el token al los req para tenerlos disponibles en futurs req
         req.uid = payload.uid;
         req.name = payload.name;
+        req.role = payload.role;
     }
     catch(error){
         console.log(error);
