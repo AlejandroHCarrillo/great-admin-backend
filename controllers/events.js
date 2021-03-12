@@ -76,7 +76,8 @@ const updateEvent = async(req, res = response ) => {
         // Agregamos el usuario firmado al evento 
         const nuevoEvento = {
             ...req.body,
-            user: uid
+            fechaactualizacion : new Date(),
+            usuarioactualizacion : uid
         }
         
         const eventoActualizado = await Evento.findByIdAndUpdate(eventoId, nuevoEvento, { new: true } );

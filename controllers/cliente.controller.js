@@ -42,7 +42,7 @@ const getClientById = async(req, res = response ) => {
 
     var sortBy = req.query.sort || 'apaterno';
     sortBy = String(sortBy);
-    // console.log("sortBy: ", sortBy);
+    console.log("sortBy: ", sortBy);
 
     try{
         Cliente.find({}, "nombre apaterno amaterno rfc activo email")
@@ -79,7 +79,12 @@ const getClientById = async(req, res = response ) => {
      try{
          cliente = new Cliente(req.body);
   
-         await cliente.save();
+         cliente.fechaalta = new Date();
+         cliente.usuarioalta = uid;
+         cliente.fechaactualizacion = new Date();
+         cliente.usuarioactualizacion = uid;
+ 
+          await cliente.save();
          
          res.status(201).json({ 
              ok: true,
@@ -123,7 +128,8 @@ const getClientById = async(req, res = response ) => {
         
         const nuevoCliente = {
             ...req.body,
-            user: uid
+            fechaactualizacion : new Date(),
+            usuarioactualizacion : uid
         }
         const clienteActualizado = await Cliente.findByIdAndUpdate(clienteId, nuevoCliente, { new: true } );
 
@@ -210,7 +216,7 @@ const findClients = async (req, res = response) => {
                     { amaterno: regex },
                     { email: regex }
                     ])
-        // .sort(sortBy)
+        .sort(sortBy)
         // .skip(desde)
         // .limit(pagesz)
         .exec((err, clientes) => {
@@ -238,30 +244,7 @@ const findClients = async (req, res = response) => {
             msg: `[Clientes get] Hubo un error, contacte al administrador`,
         });
     }
-    // try{
 
-    //   Cliente.find({}, "nombre apaterno amaterno rfc activo")
-    //     .or([
-    //       { nombre: regex },
-    //       { apaterno: regex },
-    //       { amaterno: regex },
-    //       { email: regex }
-    //     ])
-    //     .exec((err, data) => {
-    //       if (err) {
-    //         reject('[Cliente find] Error al cargar los clientes', err);
-    //       } else {
-    //         resolve(data);
-    //       }
-    //     });
-    // } catch ( error ){
-    //     console.log(error);
-    //     return res.status(500).json({ 
-    //         ok: false,
-    //         msg: `[Cliente find] Hubo un error, contacte al administrador`,
-    //     });
-
-    // }
 }
  
 module.exports = {

@@ -78,14 +78,19 @@
   const createUser = async(req, res = response ) => { 
       try{
           let usuario = new Users(req.body);
-   
+
+          usuario.fechaalta = new Date();
+          usuario.usuarioalta = uid;
+          usuario.fechaactualizacion = new Date();
+          usuario.usuarioactualizacion = uid;
+
           await usuario.save();
           
           res.status(201).json({ 
               ok: true,
               msg: `User ${ usuario.name } ha sido registrado con exito`,
               id: usuario.id,
-              name: usuario.name
+              name: usuario.nombre
           });
   
       } catch( error ){
@@ -124,7 +129,8 @@
          
          const nuevoUsuario = {
              ...req.body,
-             user: uid
+             fechaactualizacion : new Date(),
+             usuarioactualizacion : uid
          }
          const usuarioActualizado = await Users.findByIdAndUpdate(usuarioId, nuevoUsuario, { new: true } );
  
