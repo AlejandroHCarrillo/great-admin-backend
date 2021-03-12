@@ -75,37 +75,41 @@
      }
  }
   
-  const createAlumn = async(req, res = response ) => { 
-      try{
-          alumno = new Alumno(req.body);
+const createAlumn = async(req, res = response ) => { 
+    console.log("Creando Alumno:");
+    console.log("Actualizando alumno: ", req.body );
+    const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
+    console.log("uid", uid);
+    try{
+        alumno = new Alumno(req.body);
+        alumno.fechaalta = new Date();
+        alumno.usuarioalta = uid;
+        alumno.fechaactualizacion = new Date();
+        alumno.usuarioactualizacion = uid;
 
-          alumno.fechaalta = new Date();
-          alumno.usuarioalta = uid;
-          alumno.fechaactualizacion = new Date();
-          alumno.usuarioactualizacion = uid;
-  
-          await alumno.save();
+        await alumno.save();
           
-          res.status(201).json({ 
-              ok: true,
-              msg: `Alumno ${ alumno.name } ha sido registrado con exito`,
-              id: alumno.id,
-              name: alumno.name
-          });
+        res.status(201).json({ 
+            ok: true,
+            msg: `Alumno ${ alumno.name } ha sido registrado con exito`,
+            id: alumno.id,
+            name: alumno.name
+        });
   
-      } catch( error ){
-          console.log(error);
-          res.status(500).json({
-              ok: false,
-              msg: 'Error, por favor contacte a su admistrador'
-          })
-      }
-  };
+    } catch( error ){
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error, por favor contacte a su admistrador',
+            error
+        })
+    }
+};
  
   const updateAlumn = async(req, res = response ) => {
      // console.log("Actualizando alumno: ", req );
      const alumnoId = req.params.id;
-     const uid = req.uid;
+     const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
  
      try{
          const alumno = await Alumno.findById( alumnoId );

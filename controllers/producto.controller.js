@@ -46,7 +46,7 @@ const getProducts = async(req, res = response ) => {
     // console.log("sortBy: ", sortBy);
  
     try{
-        Productos.find({}, "nombre code descripcion activo")
+        Productos.find({}, "nombre code descripcion img activo")
         .sort(sortBy)
         .skip(desde)
         .limit(pagesz)
@@ -217,7 +217,7 @@ const deleteProduct = async(req, res = response ) => {
     //  console.log("buscando productos: ", regex );
  
     try{
-        Productos.find({}, "nombre code descripcion activo")
+        Productos.find({}, "nombre code descripcion img activo")
                 .or([
                     { nombre: regex },
                     { code: regex },

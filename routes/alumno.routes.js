@@ -16,14 +16,16 @@
   
   router.post('/',
                   check('nombre', 'El nombre es obligatorio').not().isEmpty(),
-                  check('code', 'El code no es valido').not().isEmpty()
+                  check('apaterno', 'El apellido es obligatorio').not().isEmpty(),
+                  check('fechaNacimiento', 'La fecha de nacimiento es obligatoria').not().isEmpty()
                   , validarCampos,
                   createAlumn );
   
   router.put('/:id',
-                  check('nombre', 'El nombre es obligatorio').not().isEmpty(),
-                  check('code', 'El email no es valido').not().isEmpty()
-                  , validarCampos,
+                    check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+                    check('apaterno', 'El apellido es obligatorio').not().isEmpty(),
+                    check('fechaNacimiento', 'La fecha de nacimiento es obligatoria').not().isEmpty()
+                    , validarCampos,
                   updateAlumn );
   
   router.delete('/:id', deleteAlumn );
