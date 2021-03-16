@@ -13,7 +13,6 @@ const ProductoSchema = Schema({
     code: { type: String, unique: true, required: [true, "La clave debe ser unica"] },
     descripcion: { type: String, required: [true, "La descripcion es requerida"] },
     img: { type: String, required: false },
-    costo: { type: Number, default: 0 },
     precio: { type: Number, required: true, default: 0 },
     tasaIVA: { type: Number, default: 0 },
     exentoIVA: { type: Boolean, default: false },

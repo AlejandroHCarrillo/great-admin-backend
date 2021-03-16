@@ -45,7 +45,7 @@
     //  console.log("sortBy: ", sortBy);
  
      try{
-         Alumno.find({}, "nombre apaterno amaterno rfc activo email")
+         Alumno.find({}, "nombre apaterno amaterno email img activo")
          .sort(sortBy)
          .skip(desde)
          .limit(pagesz)

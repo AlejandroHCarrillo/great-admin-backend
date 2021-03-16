@@ -27,7 +27,7 @@ var alumnoSchema = new Schema({
   },
   notas: { type: String },
   
-  urlFoto: { type: String },
+  img: { type: String, required: false },
 
   fechaalta: { type: Date, required: true },
   usuarioalta: { type: String, required: true },
