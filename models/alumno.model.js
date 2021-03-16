@@ -7,6 +7,8 @@ var alumnoSchema = new Schema({
   nombre: { type: String, required: [true, "El nombre es requerido"] },
   apaterno: { type: String, required: [true, "El apellido paterno es requerido"] },
   amaterno: { type: String, required: false },
+  matricula: { type: String, required: false, unique: true },
+
   fechaNacimiento: { type:Date, required: true },
 
   fechaIngreso: { type:Date, required: true },
@@ -37,5 +39,17 @@ var alumnoSchema = new Schema({
 });
 
 alumnoSchema.plugin(uniqueValidator, { message: "El {PATH} debe ser unico" });
+
+alumnoSchema.method('toJSON', function() {
+  var obj = this.toObject();
+
+  //Rename fields
+  obj.id = obj._id;
+  delete obj._id;
+  delete obj.__v;
+
+  return obj;
+});
+
 
 module.exports = mongoose.model("Alumno", alumnoSchema);

@@ -45,7 +45,7 @@
     //  console.log("sortBy: ", sortBy);
  
      try{
-         Alumno.find({}, "nombre apaterno amaterno email img activo")
+         Alumno.find({}, "nombre apaterno amaterno email img activo matricula")
          .sort(sortBy)
          .skip(desde)
          .limit(pagesz)
@@ -107,7 +107,7 @@ const createAlumn = async(req, res = response ) => {
 };
  
   const updateAlumn = async(req, res = response ) => {
-     // console.log("Actualizando alumno: ", req );
+     console.log("Actualizando alumno: ", req );
      const alumnoId = req.params.id;
      const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
  
@@ -213,11 +213,12 @@ const createAlumn = async(req, res = response ) => {
     //  console.log("buscando alumnos: ", regex );
  
      try{
-         Alumno.find({}, "nombre apaterno amaterno rfc activo email")
+         Alumno.find({}, "nombre apaterno amaterno activo email img matricula")
                 .or([
                      { nombre: regex },
                      { apaterno: regex },
                      { amaterno: regex },
+                     { matricula: regex },
                      { email: regex }
                      ])
          .sort(sortBy)
