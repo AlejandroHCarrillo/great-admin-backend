@@ -7,7 +7,7 @@ var clasificacionesValidas = {
     message: '{VALUE} no es una clasificacion permitida'
   }
   
-const ProductoSchema = Schema({
+const productoSchema = Schema({
     activo: { type: Boolean, default: true },
     nombre: { type: String, required: [true, "El nombre es requerido"] },
     code: { type: String, unique: true, required: [true, "La clave debe ser unica"] },
@@ -27,6 +27,17 @@ const ProductoSchema = Schema({
     usuarioactualizacion: { type: String, required: true }
 });
 
-ProductoSchema.plugin(uniqueValidator, { message: "El {PATH} debe ser unico" });
+productoSchema.plugin(uniqueValidator, { message: "El {PATH} debe ser unico" });
 
-module.exports = mongoose.model( 'Producto', ProductoSchema );
+productoSchema.method('toJSON', function() {
+  var obj = this.toObject();
+
+  //Rename fields
+  obj.id = obj._id;
+  delete obj._id;
+  delete obj.__v;
+
+  return obj;
+});
+
+module.exports = mongoose.model( 'Producto', productoSchema );

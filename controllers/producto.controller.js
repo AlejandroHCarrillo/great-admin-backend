@@ -41,7 +41,7 @@ const getProducts = async(req, res = response ) => {
     pagesz = Number(pagesz);
     // console.log("pagesz: ", pagesz);
  
-    var sortBy = req.query.sort || 'apaterno';
+    var sortBy = req.query.sort || 'nombre';
     sortBy = String(sortBy);
     // console.log("sortBy: ", sortBy);
  
@@ -210,14 +210,14 @@ const deleteProduct = async(req, res = response ) => {
      pagesz = Number(pagesz);
     //  console.log("pagesz: ", pagesz);
  
-     var sortBy = req.query.sort || 'apaterno';
+     var sortBy = req.query.sort || 'nombre';
      sortBy = String(sortBy);
     //  console.log("sortBy: ", sortBy);
  
     //  console.log("buscando productos: ", regex );
  
     try{
-        Productos.find({}, "nombre code descripcion img activo")
+        Productos.find({}, "nombre code descripcion img precio tasaIVA exentoIVA activo")
                 .or([
                     { nombre: regex },
                     { code: regex },

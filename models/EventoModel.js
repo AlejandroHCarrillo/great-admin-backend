@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-const EventoSchema = Schema({
+const eventoSchema = Schema({
     title: { type:String, required: true },
     notes: { type:String, required: false },
 
@@ -13,7 +13,7 @@ const EventoSchema = Schema({
     }
 });
 
-EventoSchema.method('toJSON', function() {
+eventoSchema.method('toJSON', function() {
     var obj = this.toObject();
 
     //Rename fields
@@ -24,4 +24,4 @@ EventoSchema.method('toJSON', function() {
     return obj;
 });
 
-module.exports = model('Evento', EventoSchema, 'eventos');
+module.exports = model('Evento', eventoSchema, 'eventos');
