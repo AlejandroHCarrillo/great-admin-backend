@@ -2,6 +2,7 @@
  * Este controlador regresa las respuestas a las rutas solicitadas para la autentificacion de clientes
  */
 const { response } = require('express');
+const ClienteAlumno = require('../models/cliente.alumno.model');
 PAGESIZE = require("../config/config").PAGESIZE;
 const Cliente = require('../models/cliente.model');
 
@@ -244,14 +245,138 @@ const findClients = async (req, res = response) => {
             msg: `[Clientes get] Hubo un error, contacte al administrador`,
         });
     }
+}
+
+const getClientAlumns = async (req, res = response) => {
+    const clienteId = req.params.id;
+    try{
+        ClienteAlumno.find({})
+                .or([ { cliente: clienteId } ])
+                .populate('alumno', 'nombre apaterno amaterno matricula url' )
+        .exec((err, alumnos) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: "Error cargando alumnos del cliente",
+                    errors: err
+                });
+            }
+            console.log(alumnos);
+            res.status(200).json({
+                ok: true,
+                clienteid: clienteId,
+                alumnos: alumnos,
+                found: Object.keys(alumnos).length
+            });
+
+        });            
+    } catch ( error ){
+        console.log(error);
+        return res.status(500).json({ 
+            ok: false,
+            msg: `[Clientes get] Hubo un error, contacte al administrador`,
+        });
+    }
+}
+
+const createClientAlumn = async (req, res = response) => {
+    const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";
+
+    try{
+        ClienteAlumno.find({},"")
+        .or([ { alumnoid: req.body.alumnoid } ])
+        .exec(async (err, alumnos) => {
+            if (err) {
+              return res.status(500).json({
+                ok: false,
+                mensaje: "Error cargando alumnos",
+                errors: err
+              });
+            }
+
+            if(Object.keys(alumnos).length > 0){
+                console.log("El alumno ya estaba asociado", alumnos);
+                return res.status(404).json({
+                    ok:false,
+                    msg: '[Cliente alumno] El alumno ya esta asociado a un cliente.'
+                });
+            } else{                    
+                let clientealumno = new ClienteAlumno(req.body);
+            
+                clientealumno.fechaalta = new Date();
+                clientealumno.usuarioalta = uid;
+                clientealumno.fechaactualizacion = new Date();
+                clientealumno.usuarioactualizacion = uid;
+                
+                await clientealumno.save();
+                
+                res.status(201).json({ 
+                    ok: true,
+                    msg: `La relacion cliente alumno ha sido registrada con exito`,
+                    clientealumnoid: clientealumno.id
+                });
+            }
+
+        });
+   
+    } catch( error ){
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error, por favor contacte a su admistrador'
+        })
+    }
 
 }
- 
+
+const deleteClientAlumn = async (req, res = response) => {
+    const clienteId = req.params.id;
+    const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";
+
+    try{
+        const relclientealumno = await ClienteAlumno.findById( clienteId );
+
+        if (!relclientealumno){
+            return res.status(404).json({
+                ok:false,
+                msg: '[Cliente Alumno Delete] La relacion cliente alumno no se pudo eliminar, por que no existe'
+            })            
+        }
+
+        // TODO: habilitar rol de administrador para que pueda borrar clientes 
+        // if ( clienteUserId.toString() !== uid.toString() ){
+        // if ( cliente.user.toString() !== uid ){
+        //     return res.status(401).json({
+        //         ok:false,
+        //         msg: '[Cliente Delete] El cliente solo puede ser eliminado por el propietario o el administrador'                
+        //     })            
+        // }
+        
+        const relClientealumnoEliminada = await ClienteAlumno.findByIdAndDelete( clienteId );
+        
+        return res.status(200).json({ 
+            ok: true,
+            clientealumnoEliminado: relClientealumnoEliminada
+        });
+
+    } catch ( error ){
+        console.log(error);
+        return res.status(500).json({ 
+            ok: false,
+            msg: `[Cliente Alumno Delete] Hubo un error, contacte al administrador`,
+        });
+
+    }
+}
+
 module.exports = {
     getClientById,    
     getClients,
     findClients,
     createClient,
     updateClient,
-    deleteClient
+    deleteClient,
+    getClientAlumns,
+    createClientAlumn,
+    deleteClientAlumn
  };

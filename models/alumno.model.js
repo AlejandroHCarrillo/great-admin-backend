@@ -36,7 +36,7 @@ var alumnoSchema = new Schema({
   fechaactualizacion: { type: Date, required: true },
   usuarioactualizacion: { type: String, required: true }
 
-});
+}, {	collection: 'alumnos' });
 
 alumnoSchema.plugin(uniqueValidator, { message: "El {PATH} debe ser unico" });
 

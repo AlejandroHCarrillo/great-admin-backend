@@ -6,7 +6,9 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validar-campos');
 // Importamos las funciones del controlador auth
-const { getClients, getClientById, createClient, deleteClient, updateClient, findClients } = require('../controllers/cliente.controller');
+const { getClients, getClientById, createClient, 
+        deleteClient, updateClient, findClients, 
+        getClientAlumns, createClientAlumn, deleteClientAlumn } = require('../controllers/cliente.controller');
 
 const router = Router();
 
@@ -27,6 +29,19 @@ router.put('/:id',
                 updateClient );
 
 router.delete('/:id', deleteClient );
+
+//*******************************************/
+// Rutas de los alumnos asociados al cliente
+//*******************************************/
+router.get('/alumnos/:id', getClientAlumns );
+
+router.post('/alumnos/',
+            check('clienteid', 'El id del cliente es obligatorio').not().isEmpty(),
+            check('alumnoid', 'El id del alumno es obligatorio').not().isEmpty()
+            , validarCampos,
+            createClientAlumn );
+
+router.delete('/alumnos/:id', deleteClientAlumn );
 
 // Exportamos el router
 module.exports = router;
