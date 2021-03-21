@@ -16,7 +16,6 @@ const GOOGLE_SECRET = require("../config/config").GOOGLE_SECRET;
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(CLIENT_ID);
 
-
 var mdAutenticacion = require("../middlewares/autenticacion");
 
 //  ==========================================================

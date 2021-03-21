@@ -43,7 +43,7 @@ const getClientById = async(req, res = response ) => {
 
     var sortBy = req.query.sort || 'apaterno';
     sortBy = String(sortBy);
-    console.log("sortBy: ", sortBy);
+    // console.log("sortBy: ", sortBy);
 
     try{
         Cliente.find({}, "nombre apaterno amaterno rfc activo email")
@@ -250,9 +250,9 @@ const findClients = async (req, res = response) => {
 const getClientAlumns = async (req, res = response) => {
     const clienteId = req.params.id;
     try{
-        ClienteAlumno.find({})
+        ClienteAlumno.find({}, 'alumno')
                 .or([ { cliente: clienteId } ])
-                .populate('alumno', 'nombre apaterno amaterno matricula url' )
+                .populate('alumno', 'nombre apaterno amaterno matricula img' )
         .exec((err, alumnos) => {
             if (err) {
                 return res.status(500).json({
@@ -284,7 +284,7 @@ const createClientAlumn = async (req, res = response) => {
 
     try{
         ClienteAlumno.find({},"")
-        .or([ { alumnoid: req.body.alumnoid } ])
+        .or([ { alumno: req.body.alumno } ])
         .exec(async (err, alumnos) => {
             if (err) {
               return res.status(500).json({
@@ -300,7 +300,9 @@ const createClientAlumn = async (req, res = response) => {
                     ok:false,
                     msg: '[Cliente alumno] El alumno ya esta asociado a un cliente.'
                 });
-            } else{                    
+            } else{
+                // console.log(req.body);
+
                 let clientealumno = new ClienteAlumno(req.body);
             
                 clientealumno.fechaalta = new Date();

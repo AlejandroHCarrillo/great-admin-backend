@@ -3,7 +3,7 @@
  */
 const { response } = require('express');
 const bcrypt = require('bcryptjs');
-const Usuario = require('../models/usuario');
+const Usuario = require('../models/usuario.model');
 const { generateJWT } = require('../helpers/jwt')
 const { cons_color } = require('../config/console-colors');
 
@@ -52,23 +52,35 @@ const createUser = async(req, res = response ) => {
 };
 
 const LoginUser = async (req, res = express.response ) => {
-    // Obtenemos la informacion del body
-    const {email, password } = req.body;    
-    const usuario = await Usuario.findOne({ email });
+    // console.log("Loggin in proccess...", req.body);
+    
     try{
-
+    // Obtenemos la informacion del body
+        const {email, password } = req.body;    
+        var regex = new RegExp(email, "i");
+        // console.log(regex);
+        const usuario = await Usuario.findOne({}, 'nombre username email img activo password role')
+                                .or([{ email: regex }]);
+        // console.log("se encontro este usuario: ", usuario );
         // console.log("usuario: ", usuario);
         if( !usuario ){
             return res.status(400).json({
                     ok: false,
-                    // msg: 'El usuario no existe.'
-                    msg: 'Error de autenticacion.'
+                    msg: '[Error de autenticacion] El usuario no existe.'
+                });
+        }
+
+        if( !usuario.activo ){
+            return res.status(400).json({
+                    ok: false,
+                    msg: '[Error de autenticacion] El usuario no esta activo.'
                 });
         }
 
         // revisar password encriptado
-        const isValid = bcrypt.compareSync(password, usuario.password);
-
+        // const isValid = bcrypt.compareSync(password, usuario.password);
+        const isValid = (password === usuario.password);
+        console.log("OJO: LOS PASSWORS NO ESTAN ENCRIPTADOS");
         if (!isValid){
             return res.status(400).json({
                 ok: false,
@@ -78,12 +90,18 @@ const LoginUser = async (req, res = express.response ) => {
         }
         // Generar el token
         const token = await generateJWT(usuario.id, usuario.name);
-
+        // console.log("Este es el token", token);
         res.json({ 
             ok: true,
-            name: usuario.name,
+            usuario: {
+                nombre: usuario.nombre, 
+                email: usuario.email,
+                img: usuario.img,
+                username: usuario.username,
+                role: usuario.role
+            },
             uid: usuario.id,
-            // msg: 'Login OK'
+            msg: 'Login OK',
             token
         });
     } catch( error ){
@@ -97,7 +115,7 @@ const LoginUser = async (req, res = express.response ) => {
 
 const renewToken = async (req, res = express.response ) => {
     const { uid, name } = req;
-
+    console.log("Renovando token");
     // Generar el token
     const token = await generateJWT(uid, name);
 

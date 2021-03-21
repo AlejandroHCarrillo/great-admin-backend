@@ -36,8 +36,8 @@ router.delete('/:id', deleteClient );
 router.get('/alumnos/:id', getClientAlumns );
 
 router.post('/alumnos/',
-            check('clienteid', 'El id del cliente es obligatorio').not().isEmpty(),
-            check('alumnoid', 'El id del alumno es obligatorio').not().isEmpty()
+            check('cliente', 'El id del cliente es obligatorio').not().isEmpty(),
+            check('alumno', 'El id del alumno es obligatorio').not().isEmpty()
             , validarCampos,
             createClientAlumn );
 

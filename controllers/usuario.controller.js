@@ -76,6 +76,9 @@
  }
   
   const createUser = async(req, res = response ) => { 
+      console.log("Creando usuario");
+      const uid = req.uid || "TODO: usuario no definido";
+
       try{
           let usuario = new Users(req.body);
 
@@ -88,7 +91,7 @@
           
           res.status(201).json({ 
               ok: true,
-              msg: `User ${ usuario.name } ha sido registrado con exito`,
+              msg: `User ${ usuario.nombre } ha sido registrado con exito`,
               id: usuario.id,
               name: usuario.nombre
           });
@@ -106,7 +109,7 @@
   const updateUser = async(req, res = response ) => {
      // console.log("Actualizando user: ", req );
      const usuarioId = req.params.id;
-     const uid = req.uid;
+     const uid = req.uid || "TODO: usuario no definido";
  
      try{
          const usuario = await Users.findById( usuarioId );
@@ -152,7 +155,6 @@
 const deleteUser = async(req, res = response ) => {
      // console.log("Eliminando user: ", req );
      const usuarioId = req.params.id;
-     const uid = req.uid;
  
      try{
          const usuario = await Users.findById( usuarioId );
