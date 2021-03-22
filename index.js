@@ -28,6 +28,7 @@ const usuarioRoutes = require('./routes/usuario.routes');
 const clienteRoutes = require('./routes/cliente.routes');
 const productoRoutes = require('./routes/producto.routes');
 const alumnoRoutes = require('./routes/alumno.routes');
+const cargoRoutes = require('./routes/cargo.routes');
 const imagenRoutes = require('./routes/imagen.routes');
 
 const loginRoutes = require('./routes/login');
@@ -44,6 +45,7 @@ app.use('/api/usuario', usuarioRoutes);
 app.use('/api/producto', productoRoutes);
 app.use('/api/cliente', clienteRoutes);
 app.use('/api/alumno', alumnoRoutes);
+app.use('/api/cargo', cargoRoutes);
 app.use('/api/imagen', imagenRoutes);
 
 app.use('/api/login', loginRoutes)
