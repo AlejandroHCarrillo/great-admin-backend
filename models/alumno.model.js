@@ -2,12 +2,20 @@ var mongoose = require("mongoose");
 var uniqueValidator = require("mongoose-unique-validator");
 var Schema = mongoose.Schema;
 
+var nivelesValidos = {
+  values: ["kinder", "primaria", "secundaria"],
+  message: '{VALUE} no es un nivel permitido'
+}
+
 var alumnoSchema = new Schema({
   activo: { type: Boolean, default: true },
   nombre: { type: String, required: [true, "El nombre es requerido"] },
   apaterno: { type: String, required: [true, "El apellido paterno es requerido"] },
   amaterno: { type: String, required: false },
   matricula: { type: String, required: false, unique: true },
+  nivel: { type: String, required: false, default:"primaria" },
+  grado: { type: String, required: false, default:"0" },
+  grupo: { type: String, required: false, default:"ND" },
 
   fechaNacimiento: { type:Date, required: true },
 
@@ -50,6 +58,5 @@ alumnoSchema.method('toJSON', function() {
 
   return obj;
 });
-
 
 module.exports = mongoose.model("Alumno", alumnoSchema);

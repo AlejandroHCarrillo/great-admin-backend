@@ -105,6 +105,42 @@ const createCharge = async(req, res = response ) => {
         })
     }
 };
+
+const createCharges = async(req, res = response ) => { 
+    let cargos = req.body;
+    // console.log("Creando Cargos:", cargos );
+
+    const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
+    console.log("uid", uid);
+
+    try{
+        cargos.forEach(async (charge) => {
+            cargo = new Cargo(charge);
+            // console.log("Creando cargo:", cargo );
+
+            cargo.fechaalta = new Date();
+            cargo.usuarioalta = uid;
+            cargo.fechaactualizacion = new Date();
+            cargo.usuarioactualizacion = uid; 
+
+            await cargo.save();
+        });
+          
+        res.status(201).json({ 
+            ok: true,
+            msg: `Los cargos ( ${ cargos.length } ) han sido registrados con exito`
+        });
+  
+    } catch( error ){
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error, por favor contacte a su admistrador',
+            error
+        })
+    }
+};
+
  
   const updateCharge = async(req, res = response ) => {
      console.log("Actualizando cargo: ", req );
@@ -210,7 +246,7 @@ const createCharge = async(req, res = response ) => {
      pagesz = Number(pagesz);
     //  console.log("pagesz: ", pagesz);
  
-     var sortBy = req.query.sort || 'apaterno';
+     var sortBy = req.query.sort || 'fechavencimiento';
      sortBy = String(sortBy);
     //  console.log("sortBy: ", sortBy);
  
@@ -222,7 +258,7 @@ const createCharge = async(req, res = response ) => {
                      { alumno: o_id },
                      { producto: o_id },
                     ])
-                .populate('producto', 'id code descripcion tasaIVA precio')
+                .populate('producto', 'id code nombre tasaIVA precio')
                 .sort(sortBy)
          //     .skip(desde)
          //     .limit(pagesz)
@@ -260,6 +296,7 @@ const createCharge = async(req, res = response ) => {
      getCharges,
      findCharges,
      createCharge,
+     createCharges,
      updateCharge,
      deleteCharge
   };

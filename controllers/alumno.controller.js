@@ -213,7 +213,7 @@ const createAlumn = async(req, res = response ) => {
     //  console.log("buscando alumnos: ", regex );
  
      try{
-         Alumno.find({}, "nombre apaterno amaterno activo email img matricula")
+         Alumno.find({}, "nombre apaterno amaterno activo email img nivel grado grupo matricula")
                 .or([
                      { nombre: regex },
                      { apaterno: regex },
