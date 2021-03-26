@@ -46,7 +46,7 @@ const getProducts = async(req, res = response ) => {
     // console.log("sortBy: ", sortBy);
  
     try{
-        Productos.find({}, "nombre code descripcion img activo")
+        Productos.find({}, "nombre code descripcion precio img activo")
         .sort(sortBy)
         .skip(desde)
         .limit(pagesz)
