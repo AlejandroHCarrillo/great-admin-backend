@@ -30,6 +30,7 @@ const productoRoutes = require('./routes/producto.routes');
 const alumnoRoutes = require('./routes/alumno.routes');
 const cargoRoutes = require('./routes/cargo.routes');
 const cicloescolarRoutes = require('./routes/cicloescolar.routes');
+const inscripcionesRoutes = require('./routes/inscripcion.routes');
 const imagenRoutes = require('./routes/imagen.routes');
 
 const loginRoutes = require('./routes/login');
@@ -48,6 +49,7 @@ app.use('/api/cliente', clienteRoutes);
 app.use('/api/alumno', alumnoRoutes);
 app.use('/api/cargo', cargoRoutes);
 app.use('/api/cicloescolar', cicloescolarRoutes);
+app.use('/api/inscripcion', inscripcionesRoutes);
 app.use('/api/imagen', imagenRoutes);
 
 app.use('/api/login', loginRoutes)

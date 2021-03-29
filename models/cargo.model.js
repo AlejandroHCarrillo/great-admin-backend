@@ -9,9 +9,11 @@ var estadosValidos = {
 const cargoSchema = new Schema({
     alumno: { type: Schema.Types.ObjectId, ref: 'Alumno', required: [true, "El id del alumno es requerido"] },
     producto: { type: Schema.Types.ObjectId, ref: 'Producto', required: true },
-
-    monto: { type: Number, required: [ true ], default:0},
     concepto: { type: String, required: true },
+
+    precio: { type: Number, required: [ false ], default:0},
+    tasaIVA: { type: Number, required: [ false ], default:0},
+    monto: { type: Number, required: [ true ], default:0},
     
     montopagado: { type: Number, required: [ false ], default:0},
 
