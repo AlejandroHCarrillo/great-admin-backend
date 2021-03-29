@@ -8,25 +8,25 @@
  const getCycleById = async(req, res = response ) => {
      const cicloescolarId = req.params.id;
      try{
-         const cicloescolar = await CicloEscolar.findById( cicloescolarId );
+         const ciclosescolares = await CicloEscolar.findById( cicloescolarId );
  
-         if (!cicloescolar) {
+         if (!ciclosescolares) {
              return res.status(404).json({
                  ok:false,
-                 msg: '[Cicloescolar get] El cicloescolar no existe'
+                 msg: '[cicloescolar get] El ciclo escolar no existe'
              })            
          }
  
          res.status(200).json({ 
              ok: true,
-             cicloescolar
+             ciclosescolares
          });
          
      } catch ( error ){
          console.log(error);
          return res.status(500).json({ 
              ok: false,
-             msg: `[Cicloescolars get] Hubo un error, contacte al administrador`,
+             msg: `[Ciclos escolares get] Hubo un error, contacte al administrador`,
          });
      }
  }
@@ -40,27 +40,29 @@
      pagesz = Number(pagesz);
      // console.log("pagesz: ", pagesz);
  
-     var sortBy = req.query.sort || 'apaterno';
+     var sortBy = req.query.sort || 'nombre';
      sortBy = String(sortBy);
     //  console.log("sortBy: ", sortBy);
  
      try{
-         CicloEscolar.find({}, "nombre apaterno amaterno email img activo matricula")
+         CicloEscolar.find({}, "nombre fechaInicio fechaFin")
          .sort(sortBy)
          .skip(desde)
          .limit(pagesz)
-         .exec((err, cicloescolars) => {
+         .exec((err, ciclosescolares) => {
            if (err) {
              return res.status(500).json({
                ok: false,
-               mensaje: "Error cargando cicloescolars",
+               mensaje: "Error cargando ciclosescolares",
                errors: err
              });
            }
+        //    console.log(ciclosescolares);
+
            CicloEscolar.countDocuments({}, (err, conteo) => {
              res.status(200).json({
                ok: true,
-               cicloescolars: cicloescolars,
+               ciclosescolares: ciclosescolares,
                total: conteo
              });
            });
@@ -76,8 +78,7 @@
  }
   
 const createCycle = async(req, res = response ) => { 
-    console.log("Creando Cicloescolar:");
-    console.log("Actualizando cicloescolar: ", req.body );
+    // console.log("Creando Cicloescolar:", req.body );
     const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
     console.log("uid", uid);
     try{
@@ -91,7 +92,7 @@ const createCycle = async(req, res = response ) => {
           
         res.status(201).json({ 
             ok: true,
-            msg: `Cicloescolar ${ cicloescolar.nombre } ha sido registrado con exito`,
+            msg: `El Ciclo escolar ${ cicloescolar.nombre } ha sido greado con exito`,
             id: cicloescolar.id,
             name: cicloescolar.name
         });
@@ -107,7 +108,7 @@ const createCycle = async(req, res = response ) => {
 };
  
   const updateCycle = async(req, res = response ) => {
-     console.log("Actualizando cicloescolar: ", req );
+    //  console.log("Actualizando cicloescolar: ", req );
      const cicloescolarId = req.params.id;
      const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
  
@@ -117,11 +118,11 @@ const createCycle = async(req, res = response ) => {
          if (!cicloescolar){
              return res.status(404).json({
                  ok:false,
-                 msg: '[Cicloescolar Update] El cicloescolar no se pudo actualizar por que no existe'
+                 msg: '[ciclo escolar Update] El ciclo escolar no se pudo actualizar por que no existe'
              });
          }
  
-         // TODO: habilitar rol de administrador para que pueda borrar cicloescolars 
+         // TODO: habilitar rol de administrador para que pueda borrar ciclosescolares 
          // if ( cicloescolarUserId.toString() !== uid.toString() ){
          // if ( cicloescolar.user.toString() !== uid ){
          //     return res.status(401).json({
@@ -147,7 +148,7 @@ const createCycle = async(req, res = response ) => {
          console.log(error);
          return res.status(500).json({ 
              ok: false,
-             msg: `[Cicloescolar Update] Hubo un error, contacte al administrador`,
+             msg: `[ciclo escolar Update] Hubo un error, contacte al administrador`,
          });
      }
  }
@@ -168,7 +169,7 @@ const createCycle = async(req, res = response ) => {
              })            
          }
  
-         // TODO: habilitar rol de administrador para que pueda borrar cicloescolars 
+         // TODO: habilitar rol de administrador para que pueda borrar ciclosescolares 
          // if ( cicloescolarUserId.toString() !== uid.toString() ){
          // if ( cicloescolar.user.toString() !== uid ){
          //     return res.status(401).json({
@@ -177,7 +178,7 @@ const createCycle = async(req, res = response ) => {
          //     })            
          // }
          
-         const cicloescolarEliminado = await CicloEscolar.findByIdAndDelete( cicloescolarId  );
+         const cicloescolarEliminado = await CicloEscolar.findByIdAndDelete( cicloescolarId );
          
          return res.status(200).json({ 
              ok: true,
@@ -206,37 +207,33 @@ const createCycle = async(req, res = response ) => {
      pagesz = Number(pagesz);
     //  console.log("pagesz: ", pagesz);
  
-     var sortBy = req.query.sort || 'apaterno';
+     var sortBy = req.query.sort || 'nombre';
      sortBy = String(sortBy);
     //  console.log("sortBy: ", sortBy);
  
-    //  console.log("buscando cicloescolars: ", regex );
+    //  console.log("buscando ciclosescolares: ", regex );
  
      try{
-         CicloEscolar.find({}, "nombre apaterno amaterno activo email img nivel grado grupo matricula")
+         CicloEscolar.find({}, "nombre fechaInicio fechaFin")
                 .or([
-                     { nombre: regex },
-                     { apaterno: regex },
-                     { amaterno: regex },
-                     { matricula: regex },
-                     { email: regex }
+                     { nombre: regex }
                      ])
          .sort(sortBy)
          // .skip(desde)
          // .limit(pagesz)
-         .exec((err, cicloescolars) => {
+         .exec((err, ciclosescolares) => {
            if (err) {
              return res.status(500).json({
                ok: false,
-               mensaje: "Error cargando cicloescolars",
+               mensaje: "Error cargando ciclos escolares",
                errors: err
              });
            }
            CicloEscolar.countDocuments({}, (err, conteo) => {
              res.status(200).json({
                ok: true,
-               cicloescolars: cicloescolars,
-               found: Object.keys(cicloescolars).length,
+               ciclosescolares: ciclosescolares,
+               found: Object.keys(ciclosescolares).length,
                total: conteo
              });
            });
@@ -246,7 +243,7 @@ const createCycle = async(req, res = response ) => {
          console.log(error);
          return res.status(500).json({ 
              ok: false,
-             msg: `[Cicloescolars get] Hubo un error, contacte al administrador`,
+             msg: `[Ciclos escolares get] Hubo un error, contacte al administrador`,
          });
      }
 
