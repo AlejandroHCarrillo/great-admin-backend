@@ -24,13 +24,14 @@ app.use( express.json() );
 
 // Importar Rutas 
 const appRoutes = require('./routes/app');
-const usuarioRoutes = require('./routes/usuario.routes');
-const clienteRoutes = require('./routes/cliente.routes');
-const productoRoutes = require('./routes/producto.routes');
-const alumnoRoutes = require('./routes/alumno.routes');
-const cargoRoutes = require('./routes/cargo.routes');
-const cicloescolarRoutes = require('./routes/cicloescolar.routes');
+const usuariosRoutes = require('./routes/usuario.routes');
+const clientesRoutes = require('./routes/cliente.routes');
+const productosRoutes = require('./routes/producto.routes');
+const alumnosRoutes = require('./routes/alumno.routes');
+const cargosRoutes = require('./routes/cargo.routes');
+const ciclosescolaresRoutes = require('./routes/cicloescolar.routes');
 const inscripcionesRoutes = require('./routes/inscripcion.routes');
+const cursosRoutes = require('./routes/curso.routes');
 const imagenRoutes = require('./routes/imagen.routes');
 
 const loginRoutes = require('./routes/login');
@@ -43,13 +44,14 @@ const imagenesRoutes = require('./routes/imagenes');
 // Rutas TODO: Separar los controladores de los archivos de rutas
 // usar los middlewares dentro de las rutas
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/usuario', usuarioRoutes);
-app.use('/api/producto', productoRoutes);
-app.use('/api/cliente', clienteRoutes);
-app.use('/api/alumno', alumnoRoutes);
-app.use('/api/cargo', cargoRoutes);
-app.use('/api/cicloescolar', cicloescolarRoutes);
+app.use('/api/usuario', usuariosRoutes);
+app.use('/api/producto', productosRoutes);
+app.use('/api/cliente', clientesRoutes);
+app.use('/api/alumno', alumnosRoutes);
+app.use('/api/cargo', cargosRoutes);
+app.use('/api/cicloescolar', ciclosescolaresRoutes);
 app.use('/api/inscripcion', inscripcionesRoutes);
+app.use('/api/curso', cursosRoutes);
 app.use('/api/imagen', imagenRoutes);
 
 app.use('/api/login', loginRoutes)

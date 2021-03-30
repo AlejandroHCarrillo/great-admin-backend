@@ -91,9 +91,9 @@ const createAlumn = async(req, res = response ) => {
           
         res.status(201).json({ 
             ok: true,
-            msg: `Alumno ${ alumno.name } ha sido registrado con exito`,
+            msg: `Alumno ${ alumno.nombre } ha sido registrado con exito`,
             id: alumno.id,
-            name: alumno.name
+            name: alumno.nombre
         });
   
     } catch( error ){

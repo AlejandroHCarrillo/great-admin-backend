@@ -94,7 +94,7 @@ const createCycle = async(req, res = response ) => {
             ok: true,
             msg: `El Ciclo escolar ${ cicloescolar.nombre } ha sido greado con exito`,
             id: cicloescolar.id,
-            name: cicloescolar.name
+            nombre: cicloescolar.nombre
         });
   
     } catch( error ){

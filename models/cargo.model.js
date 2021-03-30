@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 var estadosValidos = {
     values: ["NO_PAGADO", "PAGO_PARCIAL", "PAGADO", "CANCELADO"],
-    message: '{VALUE} no es un rol permitido'
+    message: '{VALUE} no es un estatus permitido'
   }
 
 const cargoSchema = new Schema({

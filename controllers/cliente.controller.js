@@ -89,9 +89,9 @@ const getClientById = async(req, res = response ) => {
          
          res.status(201).json({ 
              ok: true,
-             msg: `Cliente ${ cliente.name } ha sido registrado con exito`,
+             msg: `Cliente ${ cliente.nombre } ha sido registrado con exito`,
              id: cliente.id,
-             name: cliente.name
+             nombre: cliente.nombre
          });
  
      } catch( error ){

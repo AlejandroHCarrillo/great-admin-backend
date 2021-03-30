@@ -18,6 +18,6 @@ const inscripcionSchema = new Schema({
     fechaactualizacion: { type: Date, required: true },
     usuarioactualizacion: { type: String, required: true }
 
-}, { toJSON: { virtuals: true, }, collection: 'incripciones' });
+}, { toJSON: { virtuals: true, }, collection: 'inscripciones' });
 
 module.exports = mongoose.model("Inscripcion", inscripcionSchema);

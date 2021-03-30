@@ -91,9 +91,9 @@ const createCharge = async(req, res = response ) => {
           
         res.status(201).json({ 
             ok: true,
-            msg: `Cargo ${ cargo.name } ha sido registrado con exito`,
+            msg: `Cargo ${ cargo.concepto } ha sido registrado con exito`,
             id: cargo.id,
-            name: cargo.name
+            concepto: cargo.concepto
         });
   
     } catch( error ){
