@@ -197,7 +197,7 @@ const deleteInscription = async(req, res = response ) => {
 
 const findInscriptions = async (req, res = response) => {
     var busqueda = req.params.buscar;
- console.log("busqueda: ", busqueda);
+//  console.log("busqueda: ", busqueda);
     var o_id = new ObjectId(busqueda);
 //  console.log("o_id: ", o_id);
 

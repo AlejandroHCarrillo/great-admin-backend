@@ -12,6 +12,7 @@ const cargocursoSchema = new Schema({
     monto: { type: Number, required: [ true ], default:0},
 
     numpagos: { type: Number, required: [ true ], default:1},
+    intevalopagos: { type: Number, required: [ true ], default:1},
 
     fechaalta: { type: Date, required: true },
     usuarioalta: { type: String, required: true },
