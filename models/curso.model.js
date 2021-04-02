@@ -22,7 +22,7 @@ const cursoSchema = new Schema({
     grado: { type: Number, required: [ false ], default:1},
    
     fechaprimerpago: { type: Date, required: false },
-    intevalopagos: { type: Number, required: [ false ], default:1},
+    intervalopagos: { type: Number, required: [ false ], default:1},
 
     estatus: { type: String, required: true, default: "VIGENTE", enum: estadosValidos }, 
 

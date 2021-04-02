@@ -24,7 +24,7 @@ const getCourseById = async(req, res = response ) => {
         // cursos.forEach(async (cursoItem) => {
         let cargosCurso = [];
         CargosCurso.find({}).or( [ { curso: new ObjectId(curso.id) } ] )
-            .populate("producto", "id code nombre activo precio tasaIVA exentoIVA ")
+            .populate("producto", "id nombre activo precio tasaIVA exentoIVA ")
             .exec((err, cargos) => {
 
                 // console.log(cargos);
@@ -34,12 +34,12 @@ const getCourseById = async(req, res = response ) => {
                     cargos.forEach(cargoItem => {
                         cargosCurso.push({
                             id: cargoItem.id || -1,
+                            nombre: cargoItem.nombre || "",
                             precio: cargoItem.precio || 0,
                             tasaIVA: cargoItem.tasaIVA || 0,
                             monto: cargoItem.monto || 0,
                             numpagos: cargoItem.numpagos || 1,
-                            nombre: cargoItem.nombre || "",
-                            intevalopagos: cargoItem.intevalopagos || 1,
+                            intervalopagos: cargoItem.intervalopagos || 1,
                             producto: cargoItem.producto || {}
                         });
                     });
@@ -56,7 +56,7 @@ const getCourseById = async(req, res = response ) => {
                     grado: curso.grado,
                     numcargos: cargosCurso.length,
                     fechaprimerpago: moment(curso.fechaprimerpago).format("MM/DD/yyyy"),
-                    // intevalopagos: curso.intervalopagos || 1,
+                    // intervalopagos: curso.intervalopagos || 1,
                     estatus: curso.estatus,
                     cargos: cargosCurso
                 }
@@ -171,7 +171,7 @@ const getCoursesWithCharges = async( req, res = response ) => {
                                 monto: cargoItem.monto,
                                 numpagos: cargoItem.numpagos,
                                 nombre: cargoItem.nombre,
-                                intevalopagos: cargoItem.intevalopagos,
+                                intervalopagos: cargoItem.intervalopagos,
                                 producto: cargoItem.producto
                             });
                         });
@@ -186,7 +186,7 @@ const getCoursesWithCharges = async( req, res = response ) => {
                         grado: cursoItem.grado,
                         numcargos: cargosCurso.length,
                         fechaprimerpago: cursoItem.fechaprimerpago,
-                        intevalopagos: cursoItem.intervalopagos,
+                        intervalopagos: cursoItem.intervalopagos,
                         estatus: cursoItem.estatus,
                         cargos: cargosCurso
                     });
@@ -434,7 +434,7 @@ const findCourses = async (req, res = response) => {
                                 monto: cargoItem.monto,
                                 numpagos: cargoItem.numpagos,
                                 nombre: cargoItem.nombre,
-                                intevalopagos: intevalopagos,
+                                intervalopagos: intervalopagos,
                                 producto: cargoItem.producto
                             });
                         });
@@ -448,7 +448,7 @@ const findCourses = async (req, res = response) => {
                         nivel: cursoItem.nivel,
                         grado: cursoItem.grado,
                         numcargos: cargosCurso.length,
-                        intevalopagos: cursoItem.intervalopagos,
+                        intervalopagos: cursoItem.intervalopagos,
                         estatus: cursoItem.estatus,
                         cargos: cargosCurso
                     })
