@@ -14,6 +14,8 @@ var nivelesValidos = {
 }
 
 const cursoSchema = new Schema({
+    activo: { type: Boolean, default: true },
+
     code: { type: String, required: true, unique: true },
     nombre: { type: String, required: true },
     descripcion: { type: String, required: false },

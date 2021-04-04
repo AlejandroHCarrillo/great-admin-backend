@@ -24,7 +24,7 @@ const getCourseById = async(req, res = response ) => {
         // cursos.forEach(async (cursoItem) => {
         let cargosCurso = [];
         CargosCurso.find({}).or( [ { curso: new ObjectId(curso.id) } ] )
-            .populate("producto", "id nombre activo precio tasaIVA exentoIVA ")
+            // .populate("producto", "id nombre activo precio tasaIVA exentoIVA ")
             .exec((err, cargos) => {
 
                 // console.log(cargos);
@@ -40,7 +40,7 @@ const getCourseById = async(req, res = response ) => {
                             monto: cargoItem.monto || 0,
                             numpagos: cargoItem.numpagos || 1,
                             intervalopagos: cargoItem.intervalopagos || 1,
-                            producto: cargoItem.producto || {}
+                            // producto: cargoItem.producto || {}
                         });
                     });
                 }
@@ -171,8 +171,8 @@ const getCoursesWithCharges = async( req, res = response ) => {
                                 monto: cargoItem.monto,
                                 numpagos: cargoItem.numpagos,
                                 nombre: cargoItem.nombre,
-                                intervalopagos: cargoItem.intervalopagos,
-                                producto: cargoItem.producto
+                                intervalopagos: cargoItem.intervalopagos
+                                // , producto: cargoItem.producto
                             });
                         });
                     }
@@ -229,7 +229,6 @@ const createCourse = async(req, res = response ) => {
         await curso.save();
 
         if (cargos){
-
             cargos.forEach(element => {
                 // console.log("Cargo: ", element);
                 let cargotemp = {
@@ -238,7 +237,7 @@ const createCourse = async(req, res = response ) => {
                     tasaIVA: element.tasaIVA,
                     monto: element.monto,
                     numpagos: element.numpagos,
-                    producto: new ObjectId(element.producto),
+                    // producto: new ObjectId(element.producto),
                     curso: new ObjectId(curso._id),
 
                     fechaalta : new Date(),
@@ -247,7 +246,8 @@ const createCourse = async(req, res = response ) => {
                     usuarioactualizacion : uid
                 }
 
-                // console.log("Cargo: ", cargotemp);
+                console.log("Guardando cargo: ", cargotemp);
+
                 let cargo = new Cargo(cargotemp);
                 cargo.save(cargotemp);
             });
@@ -314,7 +314,7 @@ const updateCourse = async(req, res = response ) => {
                     tasaIVA: element.tasaIVA,
                     monto: element.monto,
                     numpagos: element.numpagos,
-                    producto: new ObjectId(element.producto),
+                    // producto: new ObjectId(element.producto),
                     curso: new ObjectId(curso._id),
                     
                     fechaalta : new Date(),
@@ -324,7 +324,7 @@ const updateCourse = async(req, res = response ) => {
                 }
                 
                 // console.log("Cargo: ", cargotemp);
-                let cargo = new Cargo(cargotemp);
+                let cargo = new CargosCurso(cargotemp);
                 // cargo.Curso = new Id()
                 
                 cargo.save(cargotemp);
@@ -341,6 +341,7 @@ const updateCourse = async(req, res = response ) => {
         return res.status(500).json({ 
             ok: false,
             msg: `[Curso Update] Hubo un error, contacte al administrador`,
+            error
         });
     }
 }
@@ -422,7 +423,7 @@ const findCourses = async (req, res = response) => {
             cursos.forEach(async (cursoItem) => {
                 let cargosCurso = [];
                 CargosCurso.find({}).or( [ { curso: new ObjectId(cursoItem.id) } ] )
-                .populate("producto")
+                // .populate("producto")
                 .exec((err, cargos) => {
                     if(cargos){
                         // console.log("Cargos: ", cargos);
@@ -434,8 +435,8 @@ const findCourses = async (req, res = response) => {
                                 monto: cargoItem.monto,
                                 numpagos: cargoItem.numpagos,
                                 nombre: cargoItem.nombre,
-                                intervalopagos: intervalopagos,
-                                producto: cargoItem.producto
+                                intervalopagos: intervalopagos
+                                // , producto: cargoItem.producto
                             });
                         });
                     }

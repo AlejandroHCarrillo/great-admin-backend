@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const cargocursoSchema = new Schema({
     curso: { type: Schema.Types.ObjectId, ref: 'Curso', required: [true, "El id del alumno es requerido"] },
-    producto: { type: Schema.Types.ObjectId, ref: 'Producto', required: true },
+    // producto: { type: Schema.Types.ObjectId, ref: 'Producto', required: true },
 
     nombre: { type: String, required: true },
 
