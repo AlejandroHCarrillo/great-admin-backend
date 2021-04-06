@@ -26,6 +26,6 @@ const cargoSchema = new Schema({
     fechaactualizacion: { type: Date, required: true },
     usuarioactualizacion: { type: String, required: true }
 
-}, { toJSON: { virtuals: true, }, collection: 'cargos' });
+}, { toJSON: { virtuals: true, }, collection: 'cargosalumnos' });
 
 module.exports = mongoose.model("Cargo", cargoSchema);

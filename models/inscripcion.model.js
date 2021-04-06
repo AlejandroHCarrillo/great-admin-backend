@@ -6,7 +6,6 @@ var estadosValidos = {
     message: '{VALUE} no es un estus permitido'
 }
 
-
 const inscripcionSchema = new Schema({
     alumno: { type: Schema.Types.ObjectId, ref: 'Alumno', required: [true, "El id del alumno es requerido"] },
     cicloescolar: { type: Schema.Types.ObjectId, ref: 'CicloEscolar', required: true },

@@ -212,7 +212,6 @@ const getCoursesWithCharges = async( req, res = response ) => {
     }
 }
 
-
 const createCourse = async(req, res = response ) => { 
     // console.log("Creando Curso:", req.body );
     const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
@@ -346,7 +345,7 @@ const updateCourse = async(req, res = response ) => {
     }
 }
   
- const deleteCourse = async(req, res = response ) => {
+const deleteCourse = async(req, res = response ) => {
     // console.log("Eliminando curso: ", req );
     const cursoId = req.params.id;
     const uid = req.uid;
@@ -378,7 +377,107 @@ const updateCourse = async(req, res = response ) => {
 
     }
 }
+
+const createCourseCharge = async(req, res = response ) => { 
+    console.log("Creando CARGO Curso:", req.body );
+    const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
+    // console.log("uid", uid);
+    try{
+        let cargo = new CargosCurso(req.body);
+        cargo.fechaalta = new Date();
+        cargo.usuarioalta = uid;
+        cargo.fechaactualizacion = new Date();
+        cargo.usuarioactualizacion = uid;
+
+        await cargo.save();
+
+        res.status(201).json({ 
+            ok: true,
+            msg: `Cargo del curso ${ cargo.nombre } ha sido registrado con exito`,
+            id: cargo.id,
+            nombre: cargo.nombre
+        });
+  
+    } catch( error ){
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error, por favor contacte a su admistrador',
+            error
+        })
+    }
+};
+
+const updateCourseCharge = async(req, res = response ) => {
+    // console.log("Actualizando cargo curso: ", req.body );
+    const cargoId = req.params.id;
+    const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";
+    try{
+        const cargo = await CargosCurso.findById( cargoId );
+
+        if (!cargo){
+            return res.status(404).json({
+                ok:false,
+                msg: '[Cargo Curso Update] El cargo del curso no se pudo actualizar por que no existe'
+            });
+        }
+        
+        const nuevoCargoCurso = {
+            ...req.body,
+            fechaactualizacion : new Date(),
+            usuarioactualizacion : uid
+        }
+
+        const cargoActualizado = await CargosCurso.findByIdAndUpdate(cargoId, nuevoCargoCurso, { new: true } );
+
+        return res.status(200).json({ 
+            ok: true,
+            cargo: cargoActualizado
+        });
+
+    } catch ( error ){
+        console.log(error);
+        return res.status(500).json({ 
+            ok: false,
+            msg: `[Curso Update] Hubo un error, contacte al administrador`,
+            error
+        });
+    }
+}
  
+
+const removeCharge = async(req, res = response ) => {
+    console.log("Eliminando cargo: ", req );
+    const chargeId = req.params.id;
+    const uid = req.uid;
+
+    try{
+        const cargo = await CargosCurso.findById( chargeId ); 
+        if (!cargo){
+            return res.status(404).json({
+                ok:false,
+                msg: '[Cargo Curso Delete] El cargo del curso no se pudo eliminar, por que no existe'
+            })            
+        }
+        
+        const cargoEliminado = await CargosCurso.findByIdAndDelete( chargeId );
+        
+        return res.status(200).json({ 
+            ok: true,
+            cargo: cargoEliminado
+        });
+
+    } catch ( error ){
+        console.log(error);
+        return res.status(500).json({ 
+            ok: false,
+            msg: `[Cargo Curso Delete] Hubo un error, contacte al administrador`,
+            error
+        });
+
+    }
+}
+
 const findCourses = async (req, res = response) => {
     var busqueda = req.params.buscar;
     var regex = new RegExp(busqueda, "i");
@@ -484,5 +583,8 @@ const findCourses = async (req, res = response) => {
      findCourses,
      createCourse,
      updateCourse,
-     deleteCourse
+     deleteCourse, 
+     createCourseCharge,
+     removeCharge,
+     updateCourseCharge
   };
