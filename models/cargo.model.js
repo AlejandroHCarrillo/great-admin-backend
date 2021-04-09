@@ -7,8 +7,9 @@ var estadosValidos = {
   }
 
 const cargoSchema = new Schema({
+    tipocargo: { type: String, required: true, default: "Otros" },
     alumno: { type: Schema.Types.ObjectId, ref: 'Alumno', required: [true, "El id del alumno es requerido"] },
-    producto: { type: Schema.Types.ObjectId, ref: 'Producto', required: true },
+    producto: { type: Schema.Types.ObjectId, ref: 'Producto', required: false },
     concepto: { type: String, required: true },
 
     precio: { type: Number, required: [ false ], default:0},

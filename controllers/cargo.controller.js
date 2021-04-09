@@ -108,7 +108,7 @@ const createCharge = async(req, res = response ) => {
 
 const createCharges = async(req, res = response ) => { 
     let cargos = req.body;
-    // console.log("Creando Cargos:", cargos );
+    console.log("Creando Cargos:", cargos );
 
     const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
     console.log("uid", uid);
@@ -118,6 +118,8 @@ const createCharges = async(req, res = response ) => {
             cargo = new Cargo(charge);
             // console.log("Creando cargo:", cargo );
 
+            if(!cargo._id && cargo.id ) { cargo._id = cargo.id }
+            
             cargo.fechaalta = new Date();
             cargo.usuarioalta = uid;
             cargo.fechaactualizacion = new Date();

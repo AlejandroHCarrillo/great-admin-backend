@@ -6,6 +6,7 @@ const cargocursoSchema = new Schema({
     // producto: { type: Schema.Types.ObjectId, ref: 'Producto', required: true },
 
     nombre: { type: String, required: true },
+    tipocargo: { type: String, required: true, default: "Otros" },
 
     precio: { type: Number, required: [ false ], default:0},
     tasaIVA: { type: Number, required: [ false ], default:0},

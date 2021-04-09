@@ -5,7 +5,7 @@
  PAGESIZE = require("../config/config").PAGESIZE;
  const CicloEscolar = require('../models/cicloescolar.model');
  
- const getCycleById = async(req, res = response ) => {
+const getCycleById = async(req, res = response ) => {
      const cicloescolarId = req.params.id;
      try{
          const ciclosescolares = await CicloEscolar.findById( cicloescolarId );
@@ -31,51 +31,52 @@
      }
  }
  
-  const getCycles = async(req, res = response ) => {
-     var desde = req.query.desde || 0;
-     desde = Number(desde);
-     // console.log("desde: ", desde);
- 
-     var pagesz = req.query.records || PAGESIZE;
-     pagesz = Number(pagesz);
-     // console.log("pagesz: ", pagesz);
- 
-     var sortBy = req.query.sort || 'nombre';
-     sortBy = String(sortBy);
-    //  console.log("sortBy: ", sortBy);
- 
-     try{
-         CicloEscolar.find({}, "nombre fechaInicio fechaFin")
-         .sort(sortBy)
-         .skip(desde)
-         .limit(pagesz)
-         .exec((err, ciclosescolares) => {
-           if (err) {
-             return res.status(500).json({
-               ok: false,
-               mensaje: "Error cargando ciclosescolares",
-               errors: err
-             });
-           }
-        //    console.log(ciclosescolares);
+const getCycles = async(req, res = response ) => {
+    // console.log("getCycles...");
 
-           CicloEscolar.countDocuments({}, (err, conteo) => {
-             res.status(200).json({
-               ok: true,
-               ciclosescolares: ciclosescolares,
-               total: conteo
-             });
-           });
-         });
-         
-     } catch ( error ){
-         console.log(error);
-         return res.status(500).json({ 
-             ok: false,
-             msg: `[Cicloescolars get] Hubo un error, contacte al administrador`,
-         });
-     }
- }
+    var desde = req.query.desde || 0;
+    desde = Number(desde);
+    // console.log("desde: ", desde);
+
+    var pagesz = req.query.records || PAGESIZE;
+    pagesz = Number(pagesz);
+    // console.log("pagesz: ", pagesz);
+
+    var sortBy = req.query.sort || 'nombre';
+    sortBy = String(sortBy);
+//  console.log("sortBy: ", sortBy);
+    try{
+        CicloEscolar.find({}, "nombre fechaInicio fechaFin activo")
+        .sort(sortBy)
+        .skip(desde)
+        .limit(pagesz)
+        .exec((err, ciclosescolares) => {
+        if (err) {
+            return res.status(500).json({
+            ok: false,
+            mensaje: "Error cargando ciclosescolares",
+            errors: err
+            });
+        }
+    //    console.log("showActivos: ", showActivos, ciclosescolares);
+
+        CicloEscolar.countDocuments({}, (err, conteo) => {
+            res.status(200).json({
+            ok: true,
+            ciclosescolares: ciclosescolares,
+            total: conteo
+            });
+        });
+        });
+        
+    } catch ( error ){
+        console.log(error);
+        return res.status(500).json({ 
+            ok: false,
+            msg: `[Cicloescolars get] Hubo un error, contacte al administrador`,
+        });
+    }
+}
   
 const createCycle = async(req, res = response ) => { 
     // console.log("Creando Cicloescolar:", req.body );
@@ -151,10 +152,9 @@ const createCycle = async(req, res = response ) => {
              msg: `[ciclo escolar Update] Hubo un error, contacte al administrador`,
          });
      }
- }
+}
   
- 
-  const deleteCycle = async(req, res = response ) => {
+const deleteCycle = async(req, res = response ) => {
      // console.log("Eliminando cicloescolar: ", req );
      const cicloescolarId = req.params.id;
      const uid = req.uid;
@@ -193,14 +193,14 @@ const createCycle = async(req, res = response ) => {
          });
  
      }
- }
+}
  
- const findCycles = async (req, res = response) => {
-     var busqueda = req.params.buscar;
-     var regex = new RegExp(busqueda, "i");
- 
-     var desde = req.query.desde || 0;
-     desde = Number(desde);
+const findCycles = async (req, res = response) => {
+    var busqueda = req.params.buscar;
+    var regex = new RegExp(busqueda, "i");
+
+    var desde = req.query.desde || 0;
+    desde = Number(desde);
     //  console.log("desde: ", desde);
  
      var pagesz = req.query.records || PAGESIZE;

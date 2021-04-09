@@ -35,6 +35,7 @@ const getCourseById = async(req, res = response ) => {
                         cargosCurso.push({
                             id: cargoItem.id || -1,
                             nombre: cargoItem.nombre || "",
+                            tipocargo: cargoItem.tipocargo,
                             precio: cargoItem.precio || 0,
                             tasaIVA: cargoItem.tasaIVA || 0,
                             monto: cargoItem.monto || 0,
@@ -48,6 +49,7 @@ const getCourseById = async(req, res = response ) => {
                 // console.log(cargosCurso);
 
                 nCurso = {
+                    activo: curso.activo,
                     id: curso.id,
                     code: curso.code,
                     nombre: curso.nombre,
@@ -73,7 +75,7 @@ const getCourseById = async(req, res = response ) => {
 
         
     } catch ( error ){
-        console.log(error);
+        // console.log(error);
         return res.status(500).json({ 
             ok: false,
             msg: `[Cursos get] Hubo un error, contacte al administrador`,
@@ -95,7 +97,7 @@ const getCourses = async(req, res = response ) => {
 //  console.log("sortBy: ", sortBy);
 
     try{
-        await Curso.find({}, "nombre code descripcion nivel grado fechaprimerpago intervalopagos estatus cargos")
+        await Curso.find({}, "activo nombre code descripcion nivel grado fechaprimerpago estatus cargos")
         .sort(sortBy)
         .skip(desde)
         .limit(pagesz)
@@ -118,7 +120,7 @@ const getCourses = async(req, res = response ) => {
         });
         
     } catch ( error ){
-        console.log(error);
+        // console.log(error);
         return res.status(500).json({ 
             ok: false,
             msg: `[Cursos get] Hubo un error, contacte al administrador`,
@@ -127,7 +129,7 @@ const getCourses = async(req, res = response ) => {
 }
 
 const getCoursesWithCharges = async( req, res = response ) => {
-    console.log("getCoursesWithCharges...");
+    // console.log("getCoursesWithCharges...", req.query );
 
     var desde = req.query.desde || 0;
     desde = Number(desde);
@@ -139,8 +141,12 @@ const getCoursesWithCharges = async( req, res = response ) => {
 
     var sortBy = req.query.sort || 'nombre';
     sortBy = String(sortBy);
-//  console.log("sortBy: ", sortBy);
+    //  console.log("sortBy: ", sortBy);
 
+    // console.log("query.activo", req.query.activo);
+    var getActivos = Boolean(req.query.activo);
+
+    // console.log("getActivos: ", getActivos);
     try{
         await Curso.find({}, "")
         // .populate("curso")
@@ -157,41 +163,48 @@ const getCoursesWithCharges = async( req, res = response ) => {
             }
 
             let nCursos = [];
-            cursos.forEach(async (cursoItem) => {
-                let cargosCurso = [];
-                CargosCurso.find({}).or( [ { curso: new ObjectId(cursoItem.id) } ] )
-                .exec((err, cargos) => {
-                    if(cargos){
-                        // console.log("Cargos: ", cargos);
-                        cargos.forEach(cargoItem => {
-                            cargosCurso.push({
-                                id: cargoItem.id,
-                                precio: cargoItem.precio,
-                                tasaIVA: cargoItem.tasaIVA,
-                                monto: cargoItem.monto,
-                                numpagos: cargoItem.numpagos,
-                                nombre: cargoItem.nombre,
-                                intervalopagos: cargoItem.intervalopagos
-                                // , producto: cargoItem.producto
-                            });
-                        });
-                    }
 
-                    nCursos.push({
-                        id: cursoItem.id,
-                        code: cursoItem.code,
-                        nombre: cursoItem.nombre,
-                        descripcion: cursoItem.descripcion,
-                        nivel: cursoItem.nivel,
-                        grado: cursoItem.grado,
-                        numcargos: cargosCurso.length,
-                        fechaprimerpago: cursoItem.fechaprimerpago,
-                        intervalopagos: cursoItem.intervalopagos,
-                        estatus: cursoItem.estatus,
-                        cargos: cargosCurso
+            cursos.forEach(async (cursoItem) => {
+                if(req.query.activo !== undefined && cursoItem.activo !== getActivos ) {
+                    // console.log("filtrar los diferentes", getActivos,  cursoItem.activo );
+                } else {
+                    let cargosCurso = [];
+                    CargosCurso.find({}).or( [ { curso: new ObjectId(cursoItem.id) } ] )
+                    .exec((err, cargos) => {
+                        if(cargos){
+                            // console.log("Cargos: ", cargos);
+                            cargos.forEach(cargoItem => {
+                                cargosCurso.push({
+                                    tipocargo: cargoItem.tipocargo,
+                                    id: cargoItem.id,
+                                    precio: cargoItem.precio,
+                                    tasaIVA: cargoItem.tasaIVA,
+                                    monto: cargoItem.monto,
+                                    numpagos: cargoItem.numpagos,
+                                    nombre: cargoItem.nombre,
+                                    intervalopagos: cargoItem.intervalopagos
+                                });
+                            });
+                        }
+
+                        nCursos.push({
+                            activo: cursoItem.activo,
+                            id: cursoItem.id,
+                            code: cursoItem.code,
+                            nombre: cursoItem.nombre,
+                            descripcion: cursoItem.descripcion,
+                            nivel: cursoItem.nivel,
+                            grado: cursoItem.grado,
+                            numcargos: cargosCurso.length,
+                            fechaprimerpago: cursoItem.fechaprimerpago,
+                            estatus: cursoItem.estatus,
+                            cargos: cargosCurso
+                        });
+
                     });
 
-                });
+                }
+
             });
 
             Curso.countDocuments({}, (err, conteo) => {
@@ -204,7 +217,7 @@ const getCoursesWithCharges = async( req, res = response ) => {
         });
         
     } catch ( error ){
-        console.log(error);
+        // console.log(error);
         return res.status(500).json({ 
             ok: false,
             msg: `[Cursos get] Hubo un error, contacte al administrador`,
@@ -245,7 +258,7 @@ const createCourse = async(req, res = response ) => {
                     usuarioactualizacion : uid
                 }
 
-                console.log("Guardando cargo: ", cargotemp);
+                // console.log("Guardando cargo: ", cargotemp);
 
                 let cargo = new Cargo(cargotemp);
                 cargo.save(cargotemp);
@@ -261,7 +274,7 @@ const createCourse = async(req, res = response ) => {
         });
   
     } catch( error ){
-        console.log(error);
+        // console.log(error);
         res.status(500).json({
             ok: false,
             msg: 'Error, por favor contacte a su admistrador',
@@ -271,10 +284,10 @@ const createCourse = async(req, res = response ) => {
 };
  
 const updateCourse = async(req, res = response ) => {
-    // console.log("Actualizando curso: ", req.body );
+    console.log("Actualizando curso: ", req.body );
     const cursoId = req.params.id;
     const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";
-    const cargos = req.body.cargos;
+    // const cargos = req.body.cargos;
 
     try{
         const curso = await Curso.findById( cursoId );
@@ -302,33 +315,33 @@ const updateCourse = async(req, res = response ) => {
         }
         const cursoActualizado = await Curso.findByIdAndUpdate(cursoId, nuevoCurso, { new: true } );
 
-        CargosCurso.deleteMany( [ { curso: new ObjectId(cursoId) } ] );
+        // CargosCurso.deleteMany( [ { curso: new ObjectId(cursoId) } ] );
 
-        if(cargos){
-            cargos.forEach(element => {
-                // console.log("Cargo: ", element);
-                let cargotemp = {
-                    nombre: element.nombre,
-                    precio: element.precio,
-                    tasaIVA: element.tasaIVA,
-                    monto: element.monto,
-                    numpagos: element.numpagos,
-                    // producto: new ObjectId(element.producto),
-                    curso: new ObjectId(curso._id),
+        // if(cargos){
+        //     cargos.forEach(element => {
+        //         // console.log("Cargo: ", element);
+        //         let cargotemp = {
+        //             nombre: element.nombre,
+        //             precio: element.precio,
+        //             tasaIVA: element.tasaIVA,
+        //             monto: element.monto,
+        //             numpagos: element.numpagos,
+        //             // producto: new ObjectId(element.producto),
+        //             curso: new ObjectId(curso._id),
                     
-                    fechaalta : new Date(),
-                    usuarioalta : uid,
-                    fechaactualizacion : new Date(),
-                    usuarioactualizacion : uid
-                }
+        //             fechaalta : new Date(),
+        //             usuarioalta : uid,
+        //             fechaactualizacion : new Date(),
+        //             usuarioactualizacion : uid
+        //         }
                 
-                // console.log("Cargo: ", cargotemp);
-                let cargo = new CargosCurso(cargotemp);
-                // cargo.Curso = new Id()
+        //         // console.log("Cargo: ", cargotemp);
+        //         let cargo = new CargosCurso(cargotemp);
+        //         // cargo.Curso = new Id()
                 
-                cargo.save(cargotemp);
-            });            
-        }
+        //         cargo.save(cargotemp);
+        //     });            
+        // }
         // console.log( cursoActualizado );
         return res.status(200).json({ 
             ok: true,
@@ -336,7 +349,7 @@ const updateCourse = async(req, res = response ) => {
         });
 
     } catch ( error ){
-        console.log(error);
+        // console.log(error);
         return res.status(500).json({ 
             ok: false,
             msg: `[Curso Update] Hubo un error, contacte al administrador`,
@@ -369,7 +382,7 @@ const deleteCourse = async(req, res = response ) => {
         });
 
     } catch ( error ){
-        console.log(error);
+        // console.log(error);
         return res.status(500).json({ 
             ok: false,
             msg: `[Curso Delete] Hubo un error, contacte al administrador`,
@@ -379,7 +392,7 @@ const deleteCourse = async(req, res = response ) => {
 }
 
 const createCourseCharge = async(req, res = response ) => { 
-    console.log("Creando CARGO Curso:", req.body );
+    // console.log("Creando CARGO Curso:", req.body );
     const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
     // console.log("uid", uid);
     try{
@@ -399,7 +412,7 @@ const createCourseCharge = async(req, res = response ) => {
         });
   
     } catch( error ){
-        console.log(error);
+        // console.log(error);
         res.status(500).json({
             ok: false,
             msg: 'Error, por favor contacte a su admistrador',
@@ -436,7 +449,7 @@ const updateCourseCharge = async(req, res = response ) => {
         });
 
     } catch ( error ){
-        console.log(error);
+        // console.log(error);
         return res.status(500).json({ 
             ok: false,
             msg: `[Curso Update] Hubo un error, contacte al administrador`,
@@ -447,7 +460,7 @@ const updateCourseCharge = async(req, res = response ) => {
  
 
 const removeCharge = async(req, res = response ) => {
-    console.log("Eliminando cargo: ", req );
+    // console.log("Eliminando cargo: ", req );
     const chargeId = req.params.id;
     const uid = req.uid;
 
@@ -468,7 +481,7 @@ const removeCharge = async(req, res = response ) => {
         });
 
     } catch ( error ){
-        console.log(error);
+        // console.log(error);
         return res.status(500).json({ 
             ok: false,
             msg: `[Cargo Curso Delete] Hubo un error, contacte al administrador`,
@@ -481,7 +494,7 @@ const removeCharge = async(req, res = response ) => {
 const findCourses = async (req, res = response) => {
     var busqueda = req.params.buscar;
     var regex = new RegExp(busqueda, "i");
-    console.log("busqueda:", busqueda);
+    // console.log("busqueda:", busqueda);
 
     var desde = req.query.desde || 0;
     desde = Number(desde);
@@ -498,7 +511,7 @@ const findCourses = async (req, res = response) => {
     //  console.log("buscando cursos: ", regex );
  
      try{
-         Curso.find({}, "id nombre code descripcion nivel grado fechaprimerpago intervalopagos estatus")
+         Curso.find({}, "id nombre code descripcion nivel grado fechaprimerpago estatus activo")
                 .or([
                      { curso: new ObjectId(busqueda) },
                      { nombre: regex },
@@ -542,13 +555,14 @@ const findCourses = async (req, res = response) => {
 
                     nCursos.push({
                         id: cursoItem.id,
+                        activo: cursoItem.activo,
                         code: cursoItem.code,
                         nombre: cursoItem.nombre,
                         descripcion: cursoItem.descripcion,
                         nivel: cursoItem.nivel,
                         grado: cursoItem.grado,
                         numcargos: cargosCurso.length,
-                        intervalopagos: cursoItem.intervalopagos,
+                        // intervalopagos: cursoItem.intervalopagos,
                         estatus: cursoItem.estatus,
                         cargos: cargosCurso
                     })
@@ -566,7 +580,7 @@ const findCourses = async (req, res = response) => {
         });
          
      } catch ( error ){
-         console.log(error);
+        //  console.log(error);
          return res.status(500).json({ 
              ok: false,
              msg: `[Cursos get] Hubo un error, contacte al administrador`,

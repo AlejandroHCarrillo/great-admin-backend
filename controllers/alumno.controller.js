@@ -107,7 +107,7 @@ const createAlumn = async(req, res = response ) => {
 };
  
   const updateAlumn = async(req, res = response ) => {
-     console.log("Actualizando alumno: ", req );
+     console.log("Actualizando alumno: ", req.body );
      const alumnoId = req.params.id;
      const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
  
