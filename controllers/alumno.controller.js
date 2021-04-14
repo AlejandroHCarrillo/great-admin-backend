@@ -152,7 +152,6 @@ const createAlumn = async(req, res = response ) => {
      }
  }
   
- 
   const deleteAlumn = async(req, res = response ) => {
      // console.log("Eliminando alumno: ", req );
      const alumnoId = req.params.id;
