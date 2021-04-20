@@ -10,6 +10,11 @@ const inscripcionSchema = new Schema({
     alumno: { type: Schema.Types.ObjectId, ref: 'Alumno', required: [true, "El id del alumno es requerido"] },
     cicloescolar: { type: Schema.Types.ObjectId, ref: 'CicloEscolar', required: true },
 
+    ciclo: { type: String, required: true }, 
+    matricula: { type: String, required: true }, 
+    nivel: { type: String, required: true }, 
+    grado: { type: Number, required: true }, 
+
     estatus: { type: String, required: true, default: "INSCRITO", enum: estadosValidos }, 
 
     fechaalta: { type: Date, required: true },

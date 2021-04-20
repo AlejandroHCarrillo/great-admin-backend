@@ -1,79 +1,120 @@
 /**
  * Este controlador regresa las respuestas a las rutas solicitadas para la autentificacion de pagos
  */
- const { response } = require('express');
- PAGESIZE = require("../config/config").PAGESIZE;
- const Pago = require('../models/pago.model');
+const { response } = require('express');
+const { ObjectId } = require('bson');
+PAGESIZE = require("../config/config").PAGESIZE;
+const Pago = require('../models/pago.model');
+
+const getPagoById = async(req, res = response ) => {
+    const pagoId = req.params.id;
+    try{
+        const pago = await Pago.findById( pagoId );
+
+        if (!pago) {
+            return res.status(404).json({
+                ok:false,
+                msg: '[Pago get] El pago no existe'
+            })            
+        }
+
+        res.status(200).json({ 
+            ok: true,
+            pago
+        });
+        
+    } catch ( error ){
+        console.log(error);
+        return res.status(500).json({ 
+            ok: false,
+            msg: `[Pagos get] Hubo un error, contacte al administrador`,
+        });
+    }
+}
  
- const getPagoById = async(req, res = response ) => {
-     const pagoId = req.params.id;
-     try{
-         const pago = await Pago.findById( pagoId );
- 
-         if (!pago) {
-             return res.status(404).json({
-                 ok:false,
-                 msg: '[Pago get] El pago no existe'
-             })            
-         }
- 
-         res.status(200).json({ 
-             ok: true,
-             pago
-         });
-         
-     } catch ( error ){
-         console.log(error);
-         return res.status(500).json({ 
-             ok: false,
-             msg: `[Pagos get] Hubo un error, contacte al administrador`,
-         });
-     }
- }
- 
-  const getPagos = async(req, res = response ) => {
-     var desde = req.query.desde || 0;
-     desde = Number(desde);
-     // console.log("desde: ", desde);
- 
-     var pagesz = req.query.records || PAGESIZE;
-     pagesz = Number(pagesz);
-     // console.log("pagesz: ", pagesz);
- 
-     var sortBy = req.query.sort || 'fechapago';
-     sortBy = String(sortBy);
-    //  console.log("sortBy: ", sortBy);
- 
-     try{
-         Pago.find({}, "folio fechapago alumno formapago montopagado ")
-         .sort(sortBy)
-         .skip(desde)
-         .limit(pagesz)
-         .exec((err, pagos) => {
-           if (err) {
-             return res.status(500).json({
-               ok: false,
-               mensaje: "Error cargando pagos",
-               errors: err
-             });
-           }
-           Pago.countDocuments({}, (err, conteo) => {
-             res.status(200).json({
-               ok: true,
-               pagos: pagos,
-               total: conteo
-             });
-           });
-         });
-         
-     } catch ( error ){
-         console.log(error);
-         return res.status(500).json({ 
-             ok: false,
-             msg: `[Pagos get] Hubo un error, contacte al administrador`,
-         });
-     }
- }
+const getPagos = async(req, res = response ) => {
+    var desde = req.query.desde || 0;
+    desde = Number(desde);
+    // console.log("desde: ", desde);
+
+    var pagesz = req.query.records || PAGESIZE;
+    pagesz = Number(pagesz);
+    // console.log("pagesz: ", pagesz);
+
+    var sortBy = req.query.sort || 'fechapago';
+    sortBy = String(sortBy);
+//  console.log("sortBy: ", sortBy);
+
+    try{
+        Pago.find({}, "folio fechapago alumno formapago montopagado ")
+        .sort(sortBy)
+        .skip(desde)
+        .limit(pagesz)
+        .exec((err, pagos) => {
+        if (err) {
+            return res.status(500).json({
+            ok: false,
+            mensaje: "Error cargando pagos",
+            errors: err
+            });
+        }
+        Pago.countDocuments({}, (err, conteo) => {
+            res.status(200).json({
+            ok: true,
+            pagos: pagos,
+            total: conteo
+            });
+        });
+        });
+        
+    } catch ( error ){
+        console.log(error);
+        return res.status(500).json({ 
+            ok: false,
+            msg: `[Pagos get] Hubo un error, contacte al administrador`,
+        });
+    }
+}
+
+const findPagosByAlumn = async(req, res = response ) => {
+    var sortBy = req.query.sort || 'fechapago';
+    sortBy = String(sortBy);
+   //  console.log("sortBy: ", sortBy); 
+   const alumnoId = req.params.id || "";
+   const uid = req.uid;
+   console.log("alumnoId: ", alumnoId); 
+   
+    try{
+        Pago.find({}, "id folio fechapago alumno montopagado estatus formapago")
+        .or([ { alumno: new ObjectId( alumnoId )  } ])
+        // .populate("alumno", "nombre apaterno amaterno grado grupo matricula id ")
+        .sort(sortBy)
+        .exec((err, pagos) => {
+          if (err) {
+            return res.status(500).json({
+              ok: false,
+              mensaje: "Error cargando pagos",
+              errors: err
+            });
+          }
+          Pago.countDocuments({}, (err, conteo) => {
+            res.status(200).json({
+              ok: true,
+            //   alumno,
+              pagos: pagos,
+              total: conteo
+            });
+          });
+        });
+        
+    } catch ( error ){
+        console.log(error);
+        return res.status(500).json({ 
+            ok: false,
+            msg: `[Pagos get] Hubo un error, contacte al administrador`,
+        });
+    }
+}
   
 const createPago = async(req, res = response ) => { 
     console.log("Creando Pago:");
@@ -263,6 +304,7 @@ const createPago = async(req, res = response ) => {
  module.exports = {
      getPagoById,
      getPagos,
+     findPagosByAlumn,
      findPagos,
      createPago,
      updatePago,

@@ -5,7 +5,6 @@ const { ObjectId } = require('bson');
 const { response } = require('express');
 PAGESIZE = require("../config/config").PAGESIZE;
 const Cargo = require('../models/cargo.model');
-const Alumno = require('../models/alumno.model');
  
 const getChargeById = async(req, res = response ) => {
     const cargoId = req.params.id;
@@ -78,6 +77,64 @@ const getCharges = async(req, res = response ) => {
      }
 }
 
+const getChargesReport = async (req, res = response) => {
+    console.log("getChargesReport...");
+    var strYear = req.params.year;
+
+    try{
+
+        var objKeyGroup = { $substr: ['$fechavencimiento', 0, 7] };
+        var objMatch = { fechavencimiento: {$gte: new Date(`${strYear}-01-01T00:00:00.0Z`), $lt: new Date(`${strYear}-12-31T23:59:59.9Z`)} };
+
+        Cargo.aggregate([
+            {   $match : objMatch  },
+            {   $group: { _id: objKeyGroup ,
+                          count: { $sum: 1 },
+                          montototal: { $sum: "$monto" }
+                }
+            },
+            {   $sort : { _id: 1 } }
+        ])
+        .exec((err, reporte) => {
+            if (err) {
+                console.log("Error: ", err);
+                return res.status(500).json({
+                ok: false,
+                mensaje: "Error cargando inscripciones",
+                errors: err
+                });
+            }
+            // console.log("Entro aqui: 1", reporte);
+
+            let totalcount = 0;
+            let totalamount = 0;
+            reporte.forEach(element => {
+                totalcount += element.count;
+                totalamount += element.montototal;
+            });
+
+            res.status(200).json({
+                ok: true,
+                year: "year",
+                reporte,
+                totalcount: totalcount,
+                totalamount
+            });
+            
+        });
+        
+    } catch ( error ){
+        console.log(error);
+        return res.status(500).json({ 
+            ok: false,
+            msg: `[Cargos Report  get] Hubo un error, contacte al administrador`,
+            error
+        });
+    }
+
+}
+
+
 const getChargesByAlumn = async(req, res = response ) => {
     var sortBy = req.query.sort || 'fechavencimiento';
     sortBy = String(sortBy);
@@ -87,8 +144,6 @@ const getChargesByAlumn = async(req, res = response ) => {
    console.log("alumnoId: ", alumnoId); 
    
     try{
-        // const alumno = await Alumno.findById( alumnoId, 'id nombre apaterno amaterno email matricula nivel grado ' );
-
         Cargo.find({}, "alumno producto monto concepto montopagado fechavencimiento estatus tipocargo ")
         .or([ { alumno: new ObjectId(alumnoId)  } ])
         // .populate("alumno", "nombre apaterno amaterno grado grupo matricula id ")
@@ -339,6 +394,7 @@ const findCharges = async (req, res = response) => {
 module.exports = {
     getChargeById, 
     getCharges,
+    getChargesReport,
     getChargesByAlumn,
     findCharges,
     createCharge,

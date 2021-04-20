@@ -23,6 +23,10 @@ var alumnoSchema = new Schema({
   curp: { type: String },
   sexo: { type: String },
 
+  beca: { type: Number, required: false, default:0 },
+  prestacion: { type: Number, required: false, default:0 },
+  apoyo: { type: Number, required: false, default:0 },
+
   callenumero: { type: String },
   colonia: { type: String },
   municipio: { type: String },

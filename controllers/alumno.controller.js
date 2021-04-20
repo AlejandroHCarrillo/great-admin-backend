@@ -31,49 +31,49 @@
      }
  }
  
-  const getAlumns = async(req, res = response ) => {
-     var desde = req.query.desde || 0;
-     desde = Number(desde);
-     // console.log("desde: ", desde);
- 
-     var pagesz = req.query.records || PAGESIZE;
-     pagesz = Number(pagesz);
-     // console.log("pagesz: ", pagesz);
- 
-     var sortBy = req.query.sort || 'apaterno';
-     sortBy = String(sortBy);
-    //  console.log("sortBy: ", sortBy);
- 
-     try{
-         Alumno.find({}, "nombre apaterno amaterno email img activo matricula")
-         .sort(sortBy)
-         .skip(desde)
-         .limit(pagesz)
-         .exec((err, alumnos) => {
-           if (err) {
-             return res.status(500).json({
-               ok: false,
-               mensaje: "Error cargando alumnos",
-               errors: err
-             });
-           }
-           Alumno.countDocuments({}, (err, conteo) => {
-             res.status(200).json({
-               ok: true,
-               alumnos: alumnos,
-               total: conteo
-             });
-           });
-         });
-         
-     } catch ( error ){
-         console.log(error);
-         return res.status(500).json({ 
-             ok: false,
-             msg: `[Alumnos get] Hubo un error, contacte al administrador`,
-         });
-     }
- }
+const getAlumns = async(req, res = response ) => {
+    var desde = req.query.desde || 0;
+    desde = Number(desde);
+    // console.log("desde: ", desde);
+
+    var pagesz = req.query.records || PAGESIZE;
+    pagesz = Number(pagesz);
+    // console.log("pagesz: ", pagesz);
+
+    var sortBy = req.query.sort || 'apaterno';
+    sortBy = String(sortBy);
+//  console.log("sortBy: ", sortBy);
+
+    try{
+        Alumno.find({}, "nombre apaterno amaterno email img activo matricula nivel grado grupo")
+        .sort(sortBy)
+        .skip(desde)
+        .limit(pagesz)
+        .exec((err, alumnos) => {
+        if (err) {
+            return res.status(500).json({
+            ok: false,
+            mensaje: "Error cargando alumnos",
+            errors: err
+            });
+        }
+        Alumno.countDocuments({}, (err, conteo) => {
+            res.status(200).json({
+            ok: true,
+            alumnos: alumnos,
+            total: conteo
+            });
+        });
+        });
+        
+    } catch ( error ){
+        console.log(error);
+        return res.status(500).json({ 
+            ok: false,
+            msg: `[Alumnos get] Hubo un error, contacte al administrador`,
+        });
+    }
+}
   
 const createAlumn = async(req, res = response ) => { 
     console.log("Creando Alumno:");

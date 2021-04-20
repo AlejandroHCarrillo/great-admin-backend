@@ -7,7 +7,6 @@ Creacion del back end para la aplicacion de admin pro del curso avanzado de Angu
 Express nos sirve para habilitar el ruteo REST de los repositorios 
 https://expressjs.com/es/starter/installing.html
 
-
 ## Base de datos MONGODB
 https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
 
@@ -78,5 +77,9 @@ npm run dev
 
 ## Levantar npm backend
 C:\Repos\backend-server>npm start
+
+## Agregation Count Sum queries
+
+https://docs.mongodb.com/manual/reference/operator/aggregation/group/
 
 

@@ -6,7 +6,7 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validar-campos');
 // Importamos las funciones del controlador auth
-const { getCharges, getChargeById, getChargesByAlumn, createCharge, createCharges, deleteCharge, updateCharge, findCharges } = require('../controllers/cargo.controller');
+const { getCharges, getChargeById, getChargesByAlumn, createCharge, createCharges, deleteCharge, updateCharge, findCharges, getChargesReport } = require('../controllers/cargo.controller');
 
 const router = Router();
 
@@ -14,6 +14,7 @@ router.get('/', getCharges );
 router.get('/:id', getChargeById );
 router.get('/find/:buscar', findCharges );
 router.get('/alumno/:id', getChargesByAlumn );
+router.get('/report/:year', getChargesReport );
 
 router.post('/',
                 check('alumno', 'El alumno es obligatorio').not().isEmpty(),

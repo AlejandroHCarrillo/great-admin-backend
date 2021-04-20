@@ -5,7 +5,8 @@ const { ObjectId } = require('bson');
 const { response } = require('express');
 PAGESIZE = require("../config/config").PAGESIZE;
 const Inscripcion = require('../models/inscripcion.model');
- 
+const Cicloescolar = require('../models/cicloescolar.model');
+
 const getInscriptionById = async(req, res = response ) => {
      const inscripcionId = req.params.id;
      try{
@@ -37,7 +38,7 @@ const getInscriptions = async(req, res = response ) => {
     desde = Number(desde);
     // console.log("desde: ", desde);
 
-    var pagesz = req.query.records || PAGESIZE;
+    var pagesz = req.query.records || PAGESIZE*10000;
     pagesz = Number(pagesz);
     // console.log("pagesz: ", pagesz);
 
@@ -78,12 +79,77 @@ const getInscriptions = async(req, res = response ) => {
     }
 }
 
+const getInscriptionsReport = async(req, res = response ) => {
+    const cicloId = req.params.ciclo;
+    // console.log("cicloId:", cicloId);
+
+    try{
+        ciclo =  await Cicloescolar.findById(cicloId);
+        // console.log(ciclo);
+
+        var objGroup = { nivel: "$nivel", 
+                         grado: "$grado" };                         
+        var objMatch = { cicloescolar: new ObjectId(cicloId), nivel: "PRIMARIA" };
+        
+        // var objMatch = { cicloescolar: new ObjectId(cicloId) };
+        // var objGroup = { ciclo: "$ciclo", nivel: "$nivel" }
+        Inscripcion
+        .aggregate([
+            {   $sort : { grado: 1 } },
+            {   $match : objMatch   },
+            {   $group: { _id: objGroup ,
+                          count: { $sum: 1}
+                }
+            }
+        ])
+        .exec((err, reporte) => {
+            if (err) {
+                console.log("Error: ", err);
+                return res.status(500).json({
+                ok: false,
+                mensaje: "Error cargando inscripciones",
+                errors: err
+                });
+            }
+            // console.log("Entro aqui: 1", reporte);
+
+            let total = 0;
+            reporte.forEach(element => {
+                console.log("-", element);
+                total += element.count;
+            });
+
+            res.status(200).json({
+                ok: true,
+                ciclo: ciclo.nombre,
+                reporte,
+                total: total
+            });
+            
+        });
+        
+    } catch ( error ){
+        console.log(error);
+        return res.status(500).json({ 
+            ok: false,
+            msg: `[Reporte Inscripciones GET] Hubo un error, contacte al administrador`,
+            error
+        });
+    }
+}
+
 const createInscription = async(req, res = response ) => { 
-// console.log("Creando Inscripcion:", req.body );
+console.log("Creando Inscripcion:", req.body );
 const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
 // console.log("uid", uid);
 try{
     inscripcion = new Inscripcion(req.body);
+
+    inscripcion.ciclo = req.body.ciclo;
+    inscripcion.matricula = req.body.matricula;
+    inscripcion.nivel = req.body.nivel;
+    inscripcion.grado = req.body.grado;
+
     inscripcion.fechaalta = new Date();
     inscripcion.usuarioalta = uid;
     inscripcion.fechaactualizacion = new Date();
@@ -263,5 +329,6 @@ module.exports = {
     findInscriptions,
     createInscription,
     updateInscription,
-    deleteInscription
+    deleteInscription,
+    getInscriptionsReport
 };

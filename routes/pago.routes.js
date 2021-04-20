@@ -6,13 +6,14 @@
   const { check } = require('express-validator');
   const { validarCampos } = require('../middlewares/validar-campos');
   // Importamos las funciones del controlador auth
-  const { getPagos, getPagoById, createPago, deletePago, updatePago, findPagos } = require('../controllers/pago.controller');
+  const { getPagos, getPagoById, findPagosByAlumn, createPago, deletePago, updatePago, findPagos } = require('../controllers/pago.controller');
 
   const router = Router();
   
   router.get('/', getPagos );
   router.get('/:id', getPagoById );
   router.get('/find/:buscar', findPagos );
+  router.get('/alumno/:id', findPagosByAlumn );
   
   router.post('/',
                   check('fechapago', 'La fecha del pago es obligatoria').not().isEmpty(),
