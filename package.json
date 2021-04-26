@@ -23,7 +23,8 @@
     "mongodb": "^3.6.4",
     "mongoose": "^5.11.16",
     "mongoose-auto-increment": "^5.0.1",
-    "mongoose-unique-validator": "^2.0.2"
+    "mongoose-unique-validator": "^2.0.2",
+    "nodemailer": "^6.5.0"
   },
   "devDependencies": {}
 }

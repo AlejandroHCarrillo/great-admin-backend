@@ -82,4 +82,13 @@ C:\Repos\backend-server>npm start
 
 https://docs.mongodb.com/manual/reference/operator/aggregation/group/
 
+## Send emails
+https://www.w3schools.com/nodejs/nodejs_email.asp
+
+npm install nodemailer --save
+
+
+
+
+
 

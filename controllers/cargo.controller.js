@@ -115,7 +115,7 @@ const getChargesReport = async (req, res = response) => {
 
             res.status(200).json({
                 ok: true,
-                year: "year",
+                year: strYear,
                 reporte,
                 totalcount: totalcount,
                 totalamount

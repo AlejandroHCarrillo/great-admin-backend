@@ -34,6 +34,8 @@ const ciclosescolaresRoutes = require('./routes/cicloescolar.routes');
 const inscripcionesRoutes = require('./routes/inscripcion.routes');
 const cursosRoutes = require('./routes/curso.routes');
 const imagenRoutes = require('./routes/imagen.routes');
+const correosRoutes = require('./routes/correo.routes');
+const estadocuentaRoutes = require('./routes/estadocuenta.routes');
 
 const loginRoutes = require('./routes/login');
 const hospitalRoutes = require('./routes/hospital');
@@ -54,7 +56,10 @@ app.use('/api/pago', pagosRoutes);
 app.use('/api/cicloescolar', ciclosescolaresRoutes);
 app.use('/api/inscripcion', inscripcionesRoutes);
 app.use('/api/curso', cursosRoutes);
+app.use('/api/correo', correosRoutes);
 app.use('/api/imagen', imagenRoutes);
+
+app.use('/api/estadocuenta', estadocuentaRoutes);
 
 app.use('/api/login', loginRoutes)
 
@@ -63,7 +68,6 @@ app.use('/api/upload', uploadRoutes)
 app.use('/api/busqueda', busquedaRoutes)
 app.use('/api/hospital', hospitalRoutes)
 app.use('/api/medico', medicoRoutes)
-
 
 app.use('/api/', appRoutes)
 

@@ -76,6 +76,118 @@ const getPagos = async(req, res = response ) => {
     }
 }
 
+const getPagosReport = async (req, res = response) => {
+    console.log("getPagosReport...");
+    var strYear = req.params.year;
+    try{
+
+        var objKeyGroup = { $substr: ['$fechapago', 0, 7] };
+        var objMatch = { fechapago: {$gte: new Date(`${strYear}-01-01T00:00:00.0Z`), $lt: new Date(`${strYear}-12-31T23:59:59.9Z`)} };
+
+        Pago.aggregate([
+            {   $match : objMatch  },
+            {   $group: { _id: objKeyGroup ,
+                          count: { $sum: 1 },
+                          montototal: { $sum: "$montopagado" }
+                }
+            },
+            {   $sort : { _id: 1 } }
+        ])
+        .exec((err, reporte) => {
+            if (err) {
+                console.log("Error: ", err);
+                return res.status(500).json({
+                ok: false,
+                mensaje: "Error cargando reporte de pagos",
+                errors: err
+                });
+            }
+            // console.log("Entro aqui: 1", reporte);
+
+            let totalcount = 0;
+            let totalamount = 0;
+            reporte.forEach(element => {
+                totalcount += element.count;
+                totalamount += element.montototal;
+            });
+
+            res.status(200).json({
+                ok: true,
+                year: strYear,
+                reporte,
+                totalcount: totalcount,
+                totalamount
+            });
+            
+        });
+        
+    } catch ( error ){
+        console.log(error);
+        return res.status(500).json({ 
+            ok: false,
+            msg: `[Pagos Report get] Hubo un error, contacte al administrador`,
+            error
+        });
+    }
+
+}
+
+const getPagosReportbyFormaPago = async (req, res = response) => {
+    console.log("getPagosReportbyFormaPago...");
+    var strYear = req.params.year;
+    try{
+
+        var objKeyGroup = { $substr: ['$formapago', 0, 10] };
+        var objMatch = { fechapago: {$gte: new Date(`${strYear}-01-01T00:00:00.0Z`), $lt: new Date(`${strYear}-12-31T23:59:59.9Z`)} };
+
+        Pago.aggregate([
+            {   $match : objMatch  },
+            {   $group: { _id: objKeyGroup ,
+                          count: { $sum: 1 },
+                          montototal: { $sum: "$montopagado" }
+                }
+            },
+            {   $sort : { _id: 1 } }
+        ])
+        .exec((err, reporte) => {
+            if (err) {
+                console.log("Error: ", err);
+                return res.status(500).json({
+                ok: false,
+                mensaje: "Error cargando reporte de pagos",
+                errors: err
+                });
+            }
+            // console.log("Entro aqui: 1", reporte);
+
+            let totalcount = 0;
+            let totalamount = 0;
+            reporte.forEach(element => {
+                totalcount += element.count;
+                totalamount += element.montototal;
+            });
+
+            res.status(200).json({
+                ok: true,
+                year: strYear,
+                reporte,
+                totalcount: totalcount,
+                totalamount
+            });
+            
+        });
+        
+    } catch ( error ){
+        console.log(error);
+        return res.status(500).json({ 
+            ok: false,
+            msg: `[Pagos Report get] Hubo un error, contacte al administrador`,
+            error
+        });
+    }
+
+}
+
 const findPagosByAlumn = async(req, res = response ) => {
     var sortBy = req.query.sort || 'fechapago';
     sortBy = String(sortBy);
@@ -304,6 +416,8 @@ const createPago = async(req, res = response ) => {
  module.exports = {
      getPagoById,
      getPagos,
+     getPagosReport,
+     getPagosReportbyFormaPago,
      findPagosByAlumn,
      findPagos,
      createPago,
