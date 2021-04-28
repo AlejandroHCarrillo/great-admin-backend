@@ -2,6 +2,7 @@
  * Este controlador regresa las respuestas a las rutas solicitadas para la autentificacion de alumnos
  */
 const { response } = require('express');
+const { isDate } = require('../helpers/isDate');
 const alumnotempModel = require('../models/alumnotemp.model');
 PAGESIZE = require("../config/config").PAGESIZE;
 const EstadoCuenta = require('../models/estadocuenta.model');
@@ -20,7 +21,7 @@ const EstadoCuenta = require('../models/estadocuenta.model');
 //  console.log("sortBy: ", sortBy);
 
     try{
-        alumnotempModel.find({}, "nombre apellidos matricula nivel folio")
+        alumnotempModel.find({}, "nombre apellidos matricula nivel folio hoja")
         .sort(sortBy)
         // .skip(desde)
         // .limit(pagesz)
@@ -96,14 +97,25 @@ const EstadoCuenta = require('../models/estadocuenta.model');
 
  }
 
- const getEstadoCuentaReport = async (req, res = response) => {
+ const getEstadoCuentaReport = async (req = request, res = response) => {
      var strMatricula = req.params.matricula;
      console.log("getEstadoCuentaReport...", strMatricula);
+     console.log("Query Params: ", req.query );
+     let fini = req.query.fini;
+     let ffin = req.query.ffin;
 
+     console.log(fini, ffin);
      try{
-        var objKeyGroup = { $substr: ['$concepto', 0, 11] };
+        let objKeyGroup = { $substr: ['$concepto', 0, 11] };
         // var objKeyGroup = { concepto: '$concepto' };
-        var objMatch = { matricula: strMatricula };
+
+        let objMatch = {};
+
+        if(strMatricula === 'periodo'){ 
+            objMatch = {}
+        } else {
+            objMatch = { matricula: strMatricula };
+        }
 
         EstadoCuenta.aggregate([
             {   $match : objMatch  },
@@ -136,7 +148,7 @@ const EstadoCuenta = require('../models/estadocuenta.model');
                 sumTotalCargos+= parseInt(element.totalcargos);
                 sumTotalAbonos+= parseInt(element.totalabonos);
                 contadorTotal+= parseInt(element.counter);
-                
+
                 newReport.push(
                     {...element,
                     totalcargos: parseInt(element.totalcargos),
@@ -172,10 +184,106 @@ const EstadoCuenta = require('../models/estadocuenta.model');
 
 }
 
+const getListaEstadosCuenta = async (req = request, res = response) => {
+    var strMatricula = req.params.matricula;
+    console.log("getEstadosCuentaList...", strMatricula);
+    console.log("Query Params: ", req.query );
+
+    let fini = req.query.fini;
+    let ffin = req.query.ffin;
+
+    console.log( isDate(fini), isDate(ffin) );
+
+    try{
+        //    let objKeyGroup = { $substr: ['$matricula', 0, 11] };
+        let objKeyGroup = '$matricula';
+
+        //    let objMatch = { matricula: strMatricula };
+        var objMatch = { 
+            // matricula: "27121029", 
+            fecha: { 
+                    $gte: `${fini}T00:00:00.0Z`, 
+                    $lte: `${ffin}T23:59:59.9Z`
+                } 
+        };
+    
+       console.log(objMatch);
+
+       EstadoCuenta.aggregate([
+           {   $match : objMatch },
+           {   $group: { _id: objKeyGroup ,
+                         counter: { $sum: 1 },
+                         totalcargos: { $sum: { $toDecimal: "$cargo" } },
+                         totalabonos: { $sum: { $toDecimal: '$abono' } },
+               }
+           },
+           {   $sort : { _id: 1 } }
+       ]).exec((err, resumen) => {
+           if (err) {
+               console.log("Error: ", err);
+               return res.status(500).json({
+               ok: false,
+               mensaje: "Error cargando resumen de pagos",
+               errors: err
+               });
+           }
+
+           let estadosCuenta = [];
+
+           let sumTotalCargos = 0;
+           let sumTotalAbonos = 0;
+           let contadorTotal = 0;
+
+           resumen.forEach(element => {
+            //    console.log(element);
+            //    console.log(parseInt(element.totalcargos));
+               sumTotalCargos+= parseInt(element.totalcargos);
+               sumTotalAbonos+= parseInt(element.totalabonos);
+               contadorTotal+= parseInt(element.counter);
+
+               estadosCuenta.push(
+                   {
+                    matricula: element._id,
+                    counter: element.counter,
+                    totalcargos: parseInt(element.totalcargos),
+                    totalabonos: parseInt(element.totalabonos),
+                    saldo: parseInt(element.totalcargos) - parseInt(element.totalabonos)
+                   }
+               );
+           });
+
+           estadosCuenta.push( {
+               _id: "Total",
+               counter: contadorTotal,
+               totalcargos: sumTotalCargos,
+               totalabonos: sumTotalAbonos
+               } );
+
+           res.status(200).json({
+               ok: true,
+               estadoscuenta: estadosCuenta
+               // totalcount: totalcount,
+               // totalamount
+           });
+           
+        });
+       
+   } catch ( error ){
+       console.log(error);
+       return res.status(500).json({ 
+           ok: false,
+           msg: `[Pagos Report get] Hubo un error, contacte al administrador`,
+           error
+       });
+   }
+
+}
+
 
  
  module.exports = {
     getAlumns, 
     getEstadoCuentaByMatricula,
-    getEstadoCuentaReport
+    getEstadoCuentaReport,
+    getListaEstadosCuenta
   };

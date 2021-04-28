@@ -138,7 +138,8 @@ const getPagosReportbyFormaPago = async (req, res = response) => {
     try{
 
         var objKeyGroup = { $substr: ['$formapago', 0, 10] };
-        var objMatch = { fechapago: {$gte: new Date(`${strYear}-01-01T00:00:00.0Z`), $lt: new Date(`${strYear}-12-31T23:59:59.9Z`)} };
+        var objMatch = { fechapago: {   $gte: new Date(`${strYear}-01-01T00:00:00.0Z`), 
+                                        $lt: new Date(`${strYear}-12-31T23:59:59.9Z`)} };
 
         Pago.aggregate([
             {   $match : objMatch  },
