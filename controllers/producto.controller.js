@@ -109,7 +109,7 @@ const getProducts = async(req, res = response ) => {
   };
  
   const updateProduct = async(req, res = response ) => {
-    // console.log("Actualizando user: ", req );
+    console.log("Actualizando user: ", req.body );
     const productoId = req.params.id;
     const uid = req.uid || "TODO: UPDATE UID NO ESTABLECIDA!!!";
  

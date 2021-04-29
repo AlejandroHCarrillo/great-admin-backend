@@ -20,6 +20,7 @@ const productoSchema = Schema({
     costo: { type: Number, default: 0 },
     conceptocontable: { type: String, required: false },
     clasificacion: { type: String, required: true, default: "PROD", enum: clasificacionesValidas }, 
+    unidadmedida: { type: String, required: false, default: "" }, 
 
     fechaalta: { type: Date, required: true },
     usuarioalta: { type: String, required: true },
