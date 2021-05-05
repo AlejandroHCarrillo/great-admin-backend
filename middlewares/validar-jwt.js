@@ -15,7 +15,7 @@ const validarJWT = (req, res = response, next ) => {
     try {
 
         const payload = jwt.verify(token, process.env.SECRET_JWT_SEED);        
-        // console.log("payload:", payload);
+        console.log("payload:", payload);
 
         // Agregamos el uid, el nombre y el rol y el token al los req para tenerlos disponibles en futurs req
         req.uid = payload.uid;

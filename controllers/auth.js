@@ -32,13 +32,14 @@ const createUser = async(req, res = response ) => {
         await usuario.save();
 
         // Generar el token
-        const token = await generateJWT(usuario.id, usuario.name);
+        const token = await generateJWT(usuario.id, usuario.nombre, usuario.role);
         
         res.status(201).json({ 
             ok: true,
             // msg: `Usuario ${ usuario.name } ha sido registrado con exito`,
             uid: usuario.id,
             name: usuario.name,
+            role: usuario.role,
             token
         });
 
@@ -52,7 +53,7 @@ const createUser = async(req, res = response ) => {
 };
 
 const LoginUser = async (req, res = express.response ) => {
-    // console.log("Loggin in proccess...", req.body);
+    console.log("Loggin in proccess...", req.body);
     
     try{
     // Obtenemos la informacion del body
@@ -89,7 +90,7 @@ const LoginUser = async (req, res = express.response ) => {
             });    
         }
         // Generar el token
-        const token = await generateJWT(usuario.id, usuario.name);
+        const token = await generateJWT(usuario.id, usuario.nombre, usuario.role);
         // console.log("Este es el token", token);
         res.json({ 
             ok: true,
@@ -114,15 +115,18 @@ const LoginUser = async (req, res = express.response ) => {
 };
 
 const renewToken = async (req, res = express.response ) => {
-    const { uid, name } = req;
-    console.log("Renovando token");
+    const { uid, name, role } = req;
+    console.log("Renovando token...");
     // Generar el token
-    const token = await generateJWT(uid, name);
+    const token = await generateJWT(uid, name, role);
+    console.log("uid: ", uid, "name: ", name, "Role: ", role);
 
     res.json({ 
         ok: true,
         token,
-        // uid,
+        uid,
+        name,
+        role
         // msg: 'Renew token from controller'
     });
 };

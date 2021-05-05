@@ -107,9 +107,13 @@ const createAlumn = async(req, res = response ) => {
 };
  
   const updateAlumn = async(req, res = response ) => {
+    const { uid, name } = req;
+    console.log("ESTA ES LA UID: ", uid);
+
+
      console.log("Actualizando alumno: ", req.body );
      const alumnoId = req.params.id;
-     const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
+    //  const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
  
      try{
          const alumno = await Alumno.findById( alumnoId );

@@ -81,15 +81,19 @@ const getInscriptions = async(req, res = response ) => {
 
 const getInscriptionsReport = async(req, res = response ) => {
     const cicloId = req.params.ciclo;
+    console.log("req.query: ", req.query);
+    var nivel = req.query.nivel;
     // console.log("cicloId:", cicloId);
+    console.log("nivel:", nivel);
 
     try{
         ciclo =  await Cicloescolar.findById(cicloId);
         // console.log(ciclo);
 
         var objGroup = { nivel: "$nivel", 
-                         grado: "$grado" };                         
-        var objMatch = { cicloescolar: new ObjectId(cicloId), nivel: "PRIMARIA" };
+                         grado: "$grado" };
+
+        var objMatch = { cicloescolar: new ObjectId(cicloId), nivel: nivel };
         
         // var objMatch = { cicloescolar: new ObjectId(cicloId) };
         // var objGroup = { ciclo: "$ciclo", nivel: "$nivel" }
@@ -141,7 +145,7 @@ const getInscriptionsReport = async(req, res = response ) => {
 const createInscription = async(req, res = response ) => { 
 console.log("Creando Inscripcion:", req.body );
 const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
-// console.log("uid", uid);
+console.log("uid usuario creacion: ", uid);
 try{
     inscripcion = new Inscripcion(req.body);
 

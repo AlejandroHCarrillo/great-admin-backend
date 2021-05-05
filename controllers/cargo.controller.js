@@ -144,7 +144,7 @@ const getChargesByAlumn = async(req, res = response ) => {
    console.log("alumnoId: ", alumnoId); 
    
     try{
-        Cargo.find({}, "alumno producto monto concepto montopagado fechavencimiento estatus tipocargo ")
+        Cargo.find({}, "alumno producto precio tasaIVA monto concepto montopagado fechavencimiento estatus tipocargo ")
         .or([ { alumno: new ObjectId(alumnoId)  } ])
         // .populate("alumno", "nombre apaterno amaterno grado grupo matricula id ")
         .sort(sortBy)
