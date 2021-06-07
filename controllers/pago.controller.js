@@ -5,6 +5,7 @@ const { response } = require('express');
 const { ObjectId } = require('bson');
 PAGESIZE = require("../config/config").PAGESIZE;
 const Pago = require('../models/pago.model');
+const { parseJwt } = require('../helpers/jwt');
 
 const getPagoById = async(req, res = response ) => {
     const pagoId = req.params.id;
@@ -230,10 +231,17 @@ const findPagosByAlumn = async(req, res = response ) => {
 }
   
 const createPago = async(req, res = response ) => { 
-    console.log("Creando Pago:");
-    console.log("Actualizando pago: ", req.body );
-    const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
-    console.log("uid", uid);
+    // console.log("Creando Pago:");
+    // console.log("pago: ", req.body );
+    const token = req.headers["x-token"];
+    // console.log("token: ", token);
+    const payload = parseJwt(token);
+    // console.log("payload: ", payload);
+    const uid = payload.uid;
+    // const uid = req.headers["x-uid"] || "TODO: UID NO ESTABLECIDA!!!";;
+    // console.log("---> uid:", uid);
+    
+
     try{
 
         Pago.nextCount(async (err, count) => {

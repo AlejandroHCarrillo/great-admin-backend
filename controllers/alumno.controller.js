@@ -78,7 +78,8 @@ const getAlumns = async(req, res = response ) => {
 const createAlumn = async(req, res = response ) => { 
     console.log("Creando Alumno:");
     console.log("Actualizando alumno: ", req.body );
-    const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
+    const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";
+
     console.log("uid", uid);
     try{
         alumno = new Alumno(req.body);
@@ -107,14 +108,8 @@ const createAlumn = async(req, res = response ) => {
 };
  
   const updateAlumn = async(req, res = response ) => {
-    const { uid, name } = req;
-    console.log("ESTA ES LA UID: ", uid);
-
-
-     console.log("Actualizando alumno: ", req.body );
-     const alumnoId = req.params.id;
-    //  const uid = req.uid || "TODO: UID NO ESTABLECIDA!!!";;
- 
+    const { uid, name } = req;     console.log("Actualizando alumno: ", req.body );
+    const alumnoId = req.params.id; 
      try{
          const alumno = await Alumno.findById( alumnoId );
  
@@ -124,16 +119,7 @@ const createAlumn = async(req, res = response ) => {
                  msg: '[Alumno Update] El alumno no se pudo actualizar por que no existe'
              });
          }
- 
-         // TODO: habilitar rol de administrador para que pueda borrar alumnos 
-         // if ( alumnoUserId.toString() !== uid.toString() ){
-         // if ( alumno.user.toString() !== uid ){
-         //     return res.status(401).json({
-         //         ok:false,
-         //         msg: '[Alumno Delete] El alumno solo puede ser eliminado por el propietario o el administrador'                
-         //     })            
-         // }
-         
+
          const nuevoAlumno = {
              ...req.body,
              fechaactualizacion : new Date(),
@@ -170,16 +156,7 @@ const createAlumn = async(req, res = response ) => {
                  msg: '[Alumno Delete] El alumno no se pudo eliminar, por que no existe'
              })            
          }
- 
-         // TODO: habilitar rol de administrador para que pueda borrar alumnos 
-         // if ( alumnoUserId.toString() !== uid.toString() ){
-         // if ( alumno.user.toString() !== uid ){
-         //     return res.status(401).json({
-         //         ok:false,
-         //         msg: '[Alumno Delete] El alumno solo puede ser eliminado por el propietario o el administrador'                
-         //     })            
-         // }
-         
+          
          const alumnoEliminado = await Alumno.findByIdAndDelete( alumnoId  );
          
          return res.status(200).json({ 

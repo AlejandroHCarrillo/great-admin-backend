@@ -1,5 +1,6 @@
 const { response } = require('express');
 const jwt = require('jsonwebtoken');
+const usuarioModel = require('../models/usuario.model');
 
 const validarJWT = (req, res = response, next ) => {
     // x-token headers
@@ -14,10 +15,11 @@ const validarJWT = (req, res = response, next ) => {
 
     try {
 
-        const payload = jwt.verify(token, process.env.SECRET_JWT_SEED);        
+        const payload = jwt.verify(token, process.env.SECRET_JWT_SEED);
         console.log("payload:", payload);
 
-        // Agregamos el uid, el nombre y el rol y el token al los req para tenerlos disponibles en futurs req
+        // Agregamos el uid, el nombre y el rol y el token 
+        // a los req para tenerlos disponibles en futurs req
         req.uid = payload.uid;
         req.name = payload.name;
         req.role = payload.role;
@@ -35,6 +37,41 @@ const validarJWT = (req, res = response, next ) => {
     next();
 }
 
+const validarADMIN_ROLE = async ( req, res, next ) =>{
+    const uid = req.uid;
+
+    try {
+        const usuarioDB = await usuarioModel.findById(uid);
+        if(!usuarioDB){
+            res.status(404).json({
+                ok: false,
+                msg: "El usuario no existe"
+            });
+        }
+
+
+        if(usuarioDB.role !== 'ADMIN_ROLE' ){
+            res.status(500).json({
+                ok: false,
+                msg: "El usuario no tiene privilegios de hacer esa operacion"
+            });
+        }
+
+        next();
+
+    } catch (error) {
+        console.log(error);
+
+        res.status(500).json({
+            ok: false,
+            msg: "Hubo un error, consulte con el administrador",
+            error
+        });
+
+    }
+}
+
 module.exports = {
-    validarJWT
+    validarJWT,
+    validarADMIN_ROLE
 }

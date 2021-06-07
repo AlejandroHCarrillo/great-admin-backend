@@ -115,7 +115,7 @@ const LoginUser = async (req, res = express.response ) => {
 };
 
 const renewToken = async (req, res = express.response ) => {
-    const { uid, name, role } = req;
+    const { name, role } = req;
     console.log("Renovando token...");
     // Generar el token
     const token = await generateJWT(uid, name, role);
