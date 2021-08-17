@@ -36,6 +36,8 @@ const cursosRoutes = require('./routes/curso.routes');
 const imagenRoutes = require('./routes/imagen.routes');
 const correosRoutes = require('./routes/correo.routes');
 const estadocuentaRoutes = require('./routes/estadocuenta.routes');
+const roleRoutes = require('./routes/auth.role.routes');
+const pantallasRoutes = require('./routes/auth.pantalla.routes');
 
 const loginRoutes = require('./routes/login');
 const hospitalRoutes = require('./routes/hospital');
@@ -62,6 +64,8 @@ app.use('/api/imagen', imagenRoutes);
 app.use('/api/estadocuenta', estadocuentaRoutes);
 
 app.use('/api/login', loginRoutes)
+app.use('/api/roles', roleRoutes)
+app.use('/api/pantallas', pantallasRoutes)
 
 app.use('/api/img', imagenesRoutes)
 app.use('/api/upload', uploadRoutes)
